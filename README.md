@@ -15,7 +15,8 @@ JSNinja is a powerful tool for extracting URLs and sensitive information from Ja
 <p align="center">
 <img src="jsninja.png" alt="JSNinja"/>
 </p>
-## Installation:
+
+### Installation:
 
 To install JSNinja, run the following commands:
 
