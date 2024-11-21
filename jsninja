@@ -52,6 +52,7 @@ def extract_secrets(js_content):
     secret_patterns = {
 
     'General API Key': r'(?i)\bAPI\s*Key\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
+    'General API Key': r'(?i)\b(?:API\s*[_ ]*Key|api\s*[_ ]*key|API_KEY|api_key)\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?'
     'API Token': r'(?i)\bAPI\s*Token\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'API Access Key': r'(?i)\bAPI\s*Access\s*Key\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'API Secret': r'(?i)\bAPI\s*Secret\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
