@@ -62,6 +62,7 @@ def extract_secrets(js_content):
     'Bearer API Token': r'(?i)Bearer\s*API\s*Token\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'API Key for Service': r'(?i)\bAPI\s*Key\s*for\s*Service\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'REST API Key': r'(?i)REST\s*API\s*Key\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
+    'formAuthenticityToken': r'(?i)formAuthenticityToken\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'API Access Token': r'(?i)\bAPI\s*Access\s*Token\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'Public API Key': r'(?i)Public\s*API\s*Key\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
     'Private API Key': r'(?i)Private\s*API\s*Key\s*[:=]?\s*[\'"]?([A-Za-z0-9_-]{32,})[\'"]?',
