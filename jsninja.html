@@ -1,0 +1,288 @@
+<html lang="en">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   JSNinja - Hunting Bugs in JavaScript!
+  </title>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&amp;display=swap" rel="stylesheet"/>
+  <style>
+   .hidden {
+            display: none;
+        }
+  </style>
+ </head>
+ <body class="bg-gray-900 text-gray-200 font-roboto">
+  <header class="bg-black text-white p-4">
+   <div class="container mx-auto flex justify-between items-center">
+    <h1 class="text-2xl font-bold">
+     JSNinja
+    </h1>
+    <button class="block md:hidden" id="menu-button">
+     <i class="fas fa-bars">
+     </i>
+    </button>
+    <nav class="hidden md:block" id="menu">
+     <ul class="flex space-x-4">
+      <li>
+       <a class="hover:underline" href="#">
+        Home
+       </a>
+      </li>
+      <li>
+       <a class="hover:underline" href="#">
+        Features
+       </a>
+      </li>
+      <li>
+       <a class="hover:underline" href="#">
+        Installation
+       </a>
+      </li>
+      <li>
+       <a class="hover:underline" href="#">
+        Usage
+       </a>
+      </li>
+      <li>
+       <a class="hover:underline" href="#">
+        Contact
+       </a>
+      </li>
+     </ul>
+    </nav>
+   </div>
+   <nav class="md:hidden hidden" id="mobile-menu">
+    <ul class="flex flex-col space-y-2 mt-4">
+     <li>
+      <a class="hover:underline" href="#">
+       Home
+      </a>
+     </li>
+     <li>
+      <a class="hover:underline" href="#">
+       Features
+      </a>
+     </li>
+     <li>
+      <a class="hover:underline" href="#">
+       Installation
+      </a>
+     </li>
+     <li>
+      <a class="hover:underline" href="#">
+       Usage
+      </a>
+     </li>
+     <li>
+      <a class="hover:underline" href="#">
+       Contact
+      </a>
+     </li>
+    </ul>
+   </nav>
+  </header>
+  <main class="container mx-auto p-4">
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-3xl font-bold mb-4">
+     JSNinja - "Hunting Bugs in JavaScript!"
+    </h2>
+    <p class="mb-4">
+     JSNinja is a powerful tool for extracting URLs and sensitive information from JavaScript files. It's designed for security enthusiasts, bug hunters, and developers.
+    </p>
+    <img alt="Illustration of a ninja hunting bugs in JavaScript code" class="w-full h-auto mb-4" height="400" src="https://storage.googleapis.com/a1aa/image/udjIyqRLFa5JLRJnRfd9a7w9gtbLrEeUvvpIPoAmWLViofsnA.jpg" width="600"/>
+   </section>
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Installation
+    </h2>
+    <p class="mb-4">
+     To install JSNinja, run the following commands:
+    </p>
+    <pre class="bg-gray-700 p-4 rounded mb-4 overflow-x-auto">
+                <code class="text-green-400">
+apt update
+apt install git python3 python3-pip -y
+git clone https://github.com/iamunixtz/JSNinja.git
+cd JSNinja
+pip3 install -r requirements.txt
+sudo cp jsninja /usr/local/bin
+jsninja -h
+                </code>
+            </pre>
+    <p class="mb-4">
+     Single Command:
+    </p>
+    <pre class="bg-gray-700 p-4 rounded overflow-x-auto">
+                <code class="text-green-400">
+apt update ; apt install git python3 python3-pip -y ; git clone https://github.com/iamunixtz/JSNinja.git ; cd JSNinja ; pip3 install -r requirements.txt ; sudo cp jsninja /usr/local/bin ;jsninja -h
+                </code>
+            </pre>
+   </section>
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Usage
+    </h2>
+    <p class="mb-4">
+     To run JSNinja, use the following command:
+    </p>
+    <pre class="bg-gray-700 p-4 rounded mb-4 overflow-x-auto">
+                <code class="text-green-400">
+python3 jsninja.py -u http://example.com/script.js --secrets --urls
+                </code>
+            </pre>
+    <h3 class="text-xl font-bold mb-2">
+     Command-Line Options:
+    </h3>
+    <ul class="list-disc list-inside mb-4">
+     <li>
+      <strong>
+       -u or --url:
+      </strong>
+      Specify a single JavaScript URL to fetch.
+     </li>
+     <li>
+      <strong>
+       --secrets:
+      </strong>
+      Look for sensitive information in the JavaScript content.
+     </li>
+     <li>
+      <strong>
+       --urls:
+      </strong>
+      Extract URLs from the JavaScript content.
+     </li>
+     <li>
+      <strong>
+       -o or --output_file:
+      </strong>
+      Specify the file to save extracted links (default: extracted_links.txt).
+     </li>
+    </ul>
+   </section>
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Features
+    </h2>
+    <ul class="list-disc list-inside mb-4">
+     <li>
+      Extract URLs from JavaScript files!
+     </li>
+     <li>
+      Identify sensitive information such as API keys and tokens!
+     </li>
+     <li>
+      User-friendly interface!
+     </li>
+     <li>
+      Open Source and actively maintained!
+     </li>
+     <li>
+      API Key Detection: Detects API keys and secrets such as AWS, Google, Stripe, and more.
+     </li>
+    </ul>
+   </section>
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Available API Regex
+    </h2>
+    <ul class="list-disc list-inside mb-4">
+     <li>
+      AWS Access Key: Detects AWS Access Key IDs.
+     </li>
+     <li>
+      AWS Secret Key: Detects AWS Secret Access Keys.
+     </li>
+     <li>
+      Google API Key: Detects Google API keys (Maps, Firebase, etc.).
+     </li>
+     <li>
+      Stripe API Key: Detects Stripe Secret API keys.
+     </li>
+     <li>
+      GitHub Token: Detects GitHub API tokens.
+     </li>
+     <li>
+      Twilio API Key: Detects Twilio Account SID and Auth Token.
+     </li>
+     <li>
+      Facebook Access Token: Detects Facebook API access tokens.
+     </li>
+     <li>
+      GitLab Token: Detects GitLab personal access tokens.
+     </li>
+     <li>
+      Telegram Bot Token: Detects Telegram bot API tokens.
+     </li>
+     <li>
+      API Key for Services: Detects other generic API keys with the format API Key: &lt;key&gt;.
+     </li>
+     <li>
+      API Token: Detects API tokens in general formats.
+     </li>
+     <li>
+      Google Maps API Key: Detects Google Maps API keys.
+     </li>
+     <li>
+      Stripe Secret Key: Detects Stripe secret keys with specific formats.
+     </li>
+     <li>
+      GitHub Personal Access Token: Captures GitHub personal access tokens.
+     </li>
+     <li>
+      AWS IAM Key: Detects IAM keys for AWS access.
+     </li>
+     <li>
+      Facebook App Secret: Detects Facebook App secrets.
+     </li>
+     <li>
+      Telegram Bot API Token: Detects Telegram bot tokens.
+     </li>
+     <li>
+      Dropbox API Key: Detects Dropbox API keys.
+     </li>
+     <li>
+      Google reCAPTCHA Key: Detects Google reCAPTCHA keys.
+     </li>
+     <li>
+      General API: Detects all general API keys.
+     </li>
+    </ul>
+   </section>
+   <section class="bg-gray-800 p-6 rounded-lg shadow-md mb-6">
+    <h2 class="text-2xl font-bold mb-4">
+     Upcoming Features
+    </h2>
+    <ul class="list-disc list-inside mb-4">
+     <li>
+      API Endpoints in JavaScript Files: The tool will be enhanced to automatically detect and extract API endpoints within JavaScript files.
+     </li>
+     <li>
+      Hidden Parameters: The tool will scan JavaScript files for hidden parameters and keys that may be obfuscated or dynamically generated.
+     </li>
+    </ul>
+   </section>
+  </main>
+  <footer class="bg-black text-white p-4">
+   <div class="container mx-auto text-center">
+    <p>
+     © 2023 JSNinja. All rights reserved.
+    </p>
+   </div>
+  </footer>
+  <script>
+   document.getElementById('menu-button').addEventListener('click', function() {
+            var menu = document.getElementById('mobile-menu');
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
+            }
+        });
+  </script>
+ </body>
+</html>
