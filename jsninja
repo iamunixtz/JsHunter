@@ -17,16 +17,14 @@ def clear_screen():
 
 def print_banner():
     banner = r"""
-     ____.         _______  .__            __        
-    |    | ______  \      \ |__| ____     |__|____   
-    |    |/  ___/  /   |   \|  |/    \    |  \__  \  
-/\__|    |\___ \  /    |    \  |   |  \   |  |/ __ \_
-\________/____  > \____|__  /__|___|  /\__|  (____  /
-              \/          \/        \/\______|    \/ 
+     ██╗███████╗    ███╗   ██╗██╗███╗   ██╗     ██╗ █████╗
+     ██║██╔════╝    ████╗  ██║██║████╗  ██║     ██║██╔══██╗
+     ██║███████╗    ██╔██╗ ██║██║██╔██╗ ██║     ██║███████║
+██   ██║╚════██║    ██║╚██╗██║██║██║╚██╗██║██   ██║██╔══██║
+╚█████╔╝███████║    ██║ ╚████║██║██║ ╚████║╚█████╔╝██║  ██║
+ ╚════╝ ╚══════╝    ╚═╝  ╚═══╝╚═╝╚═╝  ╚═══╝ ╚════╝ ╚═╝  ╚═╝
     """
     print(banner)
-    quote = f"{Fore.CYAN}JSNinja - \"Hunting Bugs in JavaScript!\"{Style.RESET_ALL}"
-    print(quote)
 
 def extract_links_from_js(js_content):
     url_pattern = r'(https?://[^\s\'"<>]+)'
@@ -206,6 +204,14 @@ def extract_secrets(js_content):
     'Hardcoded API Key': r'(?i)api_key\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
     'Hardcoded Secret': r'(?i)secret\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
     'Hardcoded Password': r'(?i)password\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
+    'Firebase URL': r'https://[a-zA-Z0-9_-]+\.firebaseio\.com',
+    'Google Cloud API Key': r'AIza[0-9A-Za-z-_]{35}',
+    'Amazon AWS Access Key ID': r'AKIA[0-9A-Z]{16}',
+    'Amazon MWS Auth Token': r'amzn\.mws\.[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}',
+    'Slack Token': r'xox[p|b|o|a]-[0-9]{12}-[0-9]{12}-[0-9]{12}-[a-z0-9]{32}',
+    'Stripe Standard API Key': r'sk_live_[0-9a-zA-Z]{24}',
+    'Stripe Restricted API Key': r'rk_live_[0-9a-zA-Z]{24}',
+    'GitHub Personal Access Token': r'ghp_[0-9a-zA-Z]{36}',
     }
 
     found_secrets = {}
