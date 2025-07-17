@@ -24,25 +24,9 @@ def print_banner():
 \________/____  > \____|__  /__|___|  /\__|  (____  /
               \/          \/        \/\______|    \/ 
     """
-    
-    # Get the terminal width
-    terminal_width = os.get_terminal_size().columns
-    banner_lines = banner.strip().splitlines()
-
-    # Print the banner with Instagram colors
-    for i, line in enumerate(banner_lines):
-        if i % 4 == 0:
-            color = Fore.MAGENTA  # Purple
-        elif i % 4 == 1:
-            color = Fore.LIGHTMAGENTA_EX  # Pink
-        elif i % 4 == 2:
-            color = Fore.YELLOW  # Yellow
-        else:
-            color = Fore.LIGHTYELLOW_EX  # Orange
-        print(color + line.center(terminal_width))
-
+    print(banner)
     quote = f"{Fore.CYAN}JSNinja - \"Hunting Bugs in JavaScript!\"{Style.RESET_ALL}"
-    print(quote.center(terminal_width))
+    print(quote)
 
 def extract_links_from_js(js_content):
     url_pattern = r'(https?://[^\s\'"<>]+)'
@@ -219,6 +203,9 @@ def extract_secrets(js_content):
     'Twitter API Secret': r'(?i)Twitter\s*API\s*Secret\s*[:=]?\s*[\'"]?([A-Za-z0-9]{32})[\'"]?',
     'Twitter Bearer Token': r'(?i)Twitter\s*Bearer\s*Token\s*[:=]?\s*[\'"]?([A-Za-z0-9]{32})[\'"]?',
     'Visual Studio App Center API Token': r'(?i)Visual\s*Studio\s*App\s*Center\s*API\s*Token\s*[:=]?\s*[\'"]?([A-Za-z0-9]{32})[\'"]?',
+    'Hardcoded API Key': r'(?i)api_key\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
+    'Hardcoded Secret': r'(?i)secret\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
+    'Hardcoded Password': r'(?i)password\s*[:=]\s*[\'"]([a-zA-Z0-9_.-]+)[\'"]',
     }
 
     found_secrets = {}
@@ -274,11 +261,16 @@ def main(input_file, output_file, look_for_secrets, look_for_urls, single_url):
             continue
         
         try:
-            response = requests.get(js_link, verify=False)
-            response.raise_for_status()
+            if js_link.startswith('file://'):
+                with open(js_link[7:], 'r') as f:
+                    js_content = f.read()
+            else:
+                response = requests.get(js_link, verify=False)
+                response.raise_for_status()
+                js_content = response.text
 
             if look_for_urls:
-                links = extract_links_from_js(response.text)
+                links = extract_links_from_js(js_content)
                 extracted_links.extend(links)
                 print(f"{Fore.BLUE}[INFO]{Style.RESET_ALL} {Fore.YELLOW}Extracted {len(links)} links from {js_link}{Style.RESET_ALL}")
 
@@ -288,7 +280,7 @@ def main(input_file, output_file, look_for_secrets, look_for_urls, single_url):
                     print(f"{Fore.RED}[INFO]{Style.RESET_ALL} {Fore.YELLOW}No URLs found in {js_link}{Style.RESET_ALL}")
 
             if look_for_secrets:
-                secrets = extract_secrets(response.text)
+                secrets = extract_secrets(js_content)
                 if secrets:
                     all_secrets[js_link] = secrets
                     print(f"{Fore.GREEN}[+] Secrets found in {js_link}: {json.dumps(secrets, indent=2)}{Style.RESET_ALL}")
