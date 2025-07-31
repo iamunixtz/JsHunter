@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+
+{% block title %}Projects - Rezon{% endblock %}
+
+{% block content %}
+<div class="flex flex-between mb-3">
+    <h1>Your Projects</h1>
+    <a href="{{ url_for('create_project') }}" class="btn">New Project</a>
+</div>
+
+{% if projects %}
+<div class="grid grid-3">
+    {% for project in projects %}
+    <div class="card">
+        <div class="card-header">{{ project.name }}</div>
+        <div class="card-body">
+            <p>{{ project.description[:100] + '...' if project.description and project.description|length > 100 else project.description or 'No description provided' }}</p>
+            
+            <div class="flex flex-between mb-3">
+                <div>
+                    <span class="badge">{{ project.scans|length }} scans</span>
+                    {% set total_secrets = project.scans|sum(attribute='total_secrets') %}
+                    {% if total_secrets > 0 %}
+                        <span class="badge badge-warning">{{ total_secrets }} secrets</span>
+                    {% endif %}
+                </div>
+                <small>{{ project.created_at.strftime('%Y-%m-%d') }}</small>
+            </div>
+            
+            <div class="flex flex-between">
+                <div>
+                    <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">View</a>
+                    <a href="{{ url_for('scan', project_id=project.id) }}" class="btn">Scan</a>
+                </div>
+                <form method="POST" action="{{ url_for('delete_project', project_id=project.id) }}" 
+                      onsubmit="return confirm('Are you sure you want to delete this project?')" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <h3>No Projects Yet</h3>
+        <p>Create your first project to start organizing your scans</p>
+        <a href="{{ url_for('create_project') }}" class="btn">Create First Project</a>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

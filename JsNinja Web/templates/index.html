@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        REZON - JavaScript Secret Scanner
+    </div>
+    <div class="card-body text-center">
+        <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">Hunt Secrets in JavaScript</h1>
+        <p style="font-size: 1.2rem; margin-bottom: 2rem;">Professional JavaScript secret scanner for security researchers</p>
+        
+        <!-- Quick Scan -->
+        <div class="card" style="max-width: 600px; margin: 0 auto;">
+            <div class="card-header">Quick Scan</div>
+            <div class="card-body">
+                <div class="tabs">
+                    <ul class="tab-list">
+                        <li><button class="tab-button" onclick="showTab('url-scan')">URL Scan</button></li>
+                        <li><button class="tab-button" onclick="showTab('code-scan')">Code Scan</button></li>
+                    </ul>
+                </div>
+                
+                <div id="url-scan" class="tab-pane">
+                    <div class="form-group">
+                        <input type="url" class="form-control" id="quickUrl" placeholder="https://example.com/script.js">
+                    </div>
+                    <button class="btn" onclick="quickScanUrl()">Scan URL</button>
+                </div>
+                
+                <div id="code-scan" class="tab-pane">
+                    <div class="form-group">
+                        <textarea class="form-control" id="quickCode" rows="6" placeholder="Paste JavaScript code here..."></textarea>
+                    </div>
+                    <button class="btn" onclick="quickScanCode()">Scan Code</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Statistics -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.total_projects }}</span>
+        <div class="stat-label">Total Projects</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.total_scans }}</span>
+        <div class="stat-label">Total Scans</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.total_secrets }}</span>
+        <div class="stat-label">Secrets Found</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ stats.critical_secrets }}</span>
+        <div class="stat-label">Critical Issues</div>
+    </div>
+</div>
+
+<!-- Recent Projects -->
+{% if projects %}
+<div class="card">
+    <div class="card-header">Recent Projects</div>
+    <div class="card-body">
+        <div class="grid grid-3">
+            {% for project in projects %}
+            <div class="card">
+                <div class="card-header">{{ project.name }}</div>
+                <div class="card-body">
+                    <p>{{ project.description[:100] + '...' if project.description and project.description|length > 100 else project.description or 'No description' }}</p>
+                    <div class="flex flex-between">
+                        <span class="badge">{{ project.scans|length }} scans</span>
+                        <div>
+                            <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">View</a>
+                            <a href="{{ url_for('scan', project_id=project.id) }}" class="btn">Scan</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('projects') }}" class="btn btn-outline">View All Projects</a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="card-body text-center">
+        <h3>No Projects Yet</h3>
+        <p>Create your first project to start scanning for secrets</p>
+        <a href="{{ url_for('create_project') }}" class="btn">Create First Project</a>
+    </div>
+</div>
+{% endif %}
+
+<script>
+function quickScanUrl() {
+    const url = document.getElementById('quickUrl').value;
+    if (!url) {
+        alert('Please enter a URL to scan');
+        return;
+    }
+    window.location.href = `/scan?url=${encodeURIComponent(url)}`;
+}
+
+function quickScanCode() {
+    const code = document.getElementById('quickCode').value;
+    if (!code.trim()) {
+        alert('Please enter some code to scan');
+        return;
+    }
+    window.location.href = `/scan?code=${encodeURIComponent(code)}`;
+}
+</script>
+{% endblock %}

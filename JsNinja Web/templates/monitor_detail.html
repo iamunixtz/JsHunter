@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}{{ monitor.name }} - Monitor - Rezon{% endblock %}
+
+{% block content %}
+<div class="flex flex-between flex-wrap mb-3">
+    <div>
+        <h1><i class="fas fa-eye"></i> {{ monitor.name }}</h1>
+        <p>Project: <strong>{{ monitor.project.name }}</strong> | Status: 
+            <span class="status-{{ monitor.status }}">
+                <i class="fas fa-{{ 'play' if monitor.status == 'active' else 'pause' if monitor.status == 'paused' else 'exclamation-triangle' }}"></i>
+                {{ monitor.status.upper() }}
+            </span>
+        </p>
+    </div>
+    <div class="btn-group">
+        <a href="{{ url_for('monitors') }}" class="btn btn-outline">
+            <i class="fas fa-arrow-left"></i> All Monitors
+        </a>
+        <form method="POST" action="{{ url_for('toggle_monitor', monitor_id=monitor.id) }}" style="display: inline;">
+            <button type="submit" class="btn {% if monitor.status == 'active' %}btn-warning{% else %}btn-success{% endif %}">
+                <i class="fas fa-{{ 'pause' if monitor.status == 'active' else 'play' }}"></i>
+                {{ 'Pause' if monitor.status == 'active' else 'Resume' }}
+            </button>
+        </form>
+        <form method="POST" action="{{ url_for('manual_check_monitor', monitor_id=monitor.id) }}" style="display: inline;">
+            <button type="submit" class="btn btn-info">
+                <i class="fas fa-sync"></i> Check Now
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Monitor Info -->
+<div class="grid grid-2">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-info-circle"></i> Monitor Information
+        </div>
+        <div class="card-body">
+            <div class="form-group">
+                <label class="form-label">URL:</label>
+                <div style="word-break: break-all;">
+                    <a href="{{ monitor.url }}" target="_blank" style="color: var(--info-blue);">
+                        {{ monitor.url }}
+                        <i class="fas fa-external-link-alt"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Check Interval:</label>
+                <span class="badge badge-info">{{ monitor.check_interval // 60 }} minutes</span>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Last Check:</label>
+                {% if monitor.last_check %}
+                    {{ monitor.last_check.strftime('%Y-%m-%d %H:%M:%S') }}
+                {% else %}
+                    <span class="badge badge-warning">Never</span>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label class="form-label">Notifications:</label>
+                <div class="flex flex-gap">
+                    {% if monitor.telegram_enabled %}
+                        <span class="badge badge-info">
+                            <i class="fab fa-telegram"></i> Telegram
+                        </span>
+                    {% endif %}
+                    {% if monitor.discord_enabled %}
+                        <span class="badge" style="background-color: #5865F2;">
+                            <i class="fab fa-discord"></i> Discord
+                        </span>
+                    {% endif %}
+                    {% if not monitor.telegram_enabled and not monitor.discord_enabled %}
+                        <span class="badge badge-secondary">None enabled</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-chart-bar"></i> Statistics
+        </div>
+        <div class="card-body text-center">
+            <div class="stat-number">{{ changes|length }}</div>
+            <div class="stat-label">Total Changes Detected</div>
+            <div class="mt-3">
+                <div class="badge badge-success">
+                    <i class="fas fa-calendar"></i> 
+                    Created {{ monitor.created_at.strftime('%Y-%m-%d') }}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Changes History -->
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-history"></i> Change History ({{ changes|length }})
+    </div>
+    <div class="card-body">
+        {% if changes %}
+            <div class="timeline">
+                {% for change in changes %}
+                <div class="timeline-item">
+                    <div class="timeline-content">
+                        <div class="flex flex-between flex-wrap mb-2">
+                            <h4 style="margin: 0; color: var(--primary-black);">
+                                <i class="fas fa-code-branch"></i> {{ change.change_summary }}
+                            </h4>
+                            <div class="flex flex-gap">
+                                <span class="badge badge-info">
+                                    <i class="fas fa-clock"></i> {{ change.detected_at.strftime('%Y-%m-%d %H:%M:%S') }}
+                                </span>
+                                {% if change.notified %}
+                                    <span class="badge badge-success">
+                                        <i class="fas fa-bell"></i> Notified
+                                    </span>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="flex flex-gap">
+                                <span class="badge badge-danger">
+                                    <i class="fas fa-minus"></i> Old: {{ change.old_content_hash[:16] }}...
+                                </span>
+                                <span class="badge badge-success">
+                                    <i class="fas fa-plus"></i> New: {{ change.new_content_hash[:16] }}...
+                                </span>
+                            </div>
+                        </div>
+                        
+                        {% if change.diff_content %}
+                        <details style="margin-top: 1rem;">
+                            <summary class="btn btn-outline btn-sm" style="cursor: pointer;">
+                                <i class="fas fa-code"></i> View Detailed Changes
+                            </summary>
+                            <div class="diff-container mt-2">
+                                <div class="diff-header">
+                                    <i class="fas fa-file-code"></i> Content Diff
+                                </div>
+                                <div class="diff-content">
+                                    {% set diff_lines = change.diff_content.split('\n') %}
+                                    {% for line in diff_lines %}
+                                        {% if line.startswith('+++') or line.startswith('---') %}
+                                            <div class="diff-line context" style="font-weight: bold; background-color: #e9ecef;">{{ line }}</div>
+                                        {% elif line.startswith('+') %}
+                                            <div class="diff-line added">{{ line }}</div>
+                                        {% elif line.startswith('-') %}
+                                            <div class="diff-line removed">{{ line }}</div>
+                                        {% elif line.startswith('@@') %}
+                                            <div class="diff-line context" style="background-color: #fff3cd; font-weight: bold;">{{ line }}</div>
+                                        {% else %}
+                                            <div class="diff-line context">{{ line }}</div>
+                                        {% endif %}
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </details>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="text-center" style="padding: 3rem;">
+                <div style="font-size: 4rem; color: var(--medium-gray); margin-bottom: 1rem;">
+                    <i class="fas fa-history"></i>
+                </div>
+                <h3 style="color: var(--medium-gray);">No Changes Detected</h3>
+                <p style="color: var(--medium-gray); margin-bottom: 2rem;">This monitor hasn't detected any changes yet. Changes will appear here when the JavaScript content is modified.</p>
+                <form method="POST" action="{{ url_for('manual_check_monitor', monitor_id=monitor.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-info">
+                        <i class="fas fa-sync"></i> Check for Changes Now
+                    </button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

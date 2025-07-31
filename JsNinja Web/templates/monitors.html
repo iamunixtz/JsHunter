@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}JS Monitors - Rezon{% endblock %}
+
+{% block content %}
+<div class="flex flex-between mb-3">
+    <h1>JavaScript Monitors</h1>
+    <a href="{{ url_for('create_monitor') }}" class="btn">New Monitor</a>
+</div>
+
+<!-- Monitor Stats -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <span class="stat-number">{{ monitors|length }}</span>
+        <div class="stat-label">Total Monitors</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ monitors|selectattr('status', 'equalto', 'active')|list|length }}</span>
+        <div class="stat-label">Active</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ monitors|selectattr('status', 'equalto', 'paused')|list|length }}</span>
+        <div class="stat-label">Paused</div>
+    </div>
+    <div class="stat-card">
+        <span class="stat-number">{{ monitors|selectattr('status', 'equalto', 'error')|list|length }}</span>
+        <div class="stat-label">Errors</div>
+    </div>
+</div>
+
+<!-- Monitors List -->
+<div class="card">
+    <div class="card-header">All Monitors</div>
+    <div class="card-body">
+        {% if monitors %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Project</th>
+                    <th>URL</th>
+                    <th>Status</th>
+                    <th>Interval</th>
+                    <th>Last Check</th>
+                    <th>Changes</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for monitor in monitors %}
+                <tr>
+                    <td><strong>{{ monitor.name }}</strong></td>
+                    <td>{{ monitor.project.name }}</td>
+                    <td>
+                        <a href="{{ monitor.url }}" target="_blank">
+                            {{ monitor.url[:50] + '...' if monitor.url|length > 50 else monitor.url }}
+                        </a>
+                    </td>
+                    <td>
+                        <span class="status-{{ monitor.status }}">{{ monitor.status.upper() }}</span>
+                    </td>
+                    <td>{{ monitor.check_interval // 60 }}m</td>
+                    <td>
+                        {% if monitor.last_check %}
+                            {{ monitor.last_check.strftime('%Y-%m-%d %H:%M') }}
+                        {% else %}
+                            Never
+                        {% endif %}
+                    </td>
+                    <td>{{ monitor.changes|length }}</td>
+                    <td>
+                        <a href="{{ url_for('monitor_detail', monitor_id=monitor.id) }}" class="btn btn-outline">View</a>
+                        <form method="POST" action="{{ url_for('toggle_monitor', monitor_id=monitor.id) }}" style="display: inline;">
+                            <button type="submit" class="btn btn-outline">
+                                {{ 'Pause' if monitor.status == 'active' else 'Resume' }}
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div class="text-center">
+            <h3>No Monitors Yet</h3>
+            <p>Create your first JavaScript monitor to start tracking changes</p>
+            <a href="{{ url_for('create_monitor') }}" class="btn">Create First Monitor</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

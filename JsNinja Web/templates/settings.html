@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - Rezon{% endblock %}
+
+{% block content %}
+<div class="flex flex-between flex-wrap mb-3">
+    <h1><i class="fas fa-cog"></i> Settings</h1>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-bell"></i> Notification Settings
+    </div>
+    <div class="card-body">
+        <form method="POST" action="{{ url_for('update_notification_settings') }}">
+            <div class="grid grid-2">
+                <div>
+                    <h3><i class="fab fa-telegram"></i> Telegram Configuration</h3>
+                    <div class="form-group">
+                        <label class="form-label">Bot Token</label>
+                        <input type="text" class="form-control" name="telegram_bot_token" 
+                               value="{{ settings.telegram_bot_token if settings else '' }}"
+                               placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz">
+                        <small>Get from @BotFather on Telegram</small>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Chat ID</label>
+                        <input type="text" class="form-control" name="telegram_chat_id" 
+                               value="{{ settings.telegram_chat_id if settings else '' }}"
+                               placeholder="-1001234567890">
+                        <small>Your chat ID or group ID</small>
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="testTelegram()">
+                        <i class="fas fa-paper-plane"></i> Test Telegram
+                    </button>
+                </div>
+                
+                <div>
+                    <h3><i class="fab fa-discord"></i> Discord Configuration</h3>
+                    <div class="form-group">
+                        <label class="form-label">Webhook URL</label>
+                        <input type="url" class="form-control" name="discord_webhook_url" 
+                               value="{{ settings.discord_webhook_url if settings else '' }}"
+                               placeholder="https://discord.com/api/webhooks/...">
+                        <small>Create in Discord Server Settings → Integrations</small>
+                    </div>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="testDiscord()">
+                        <i class="fas fa-paper-plane"></i> Test Discord
+                    </button>
+                </div>
+            </div>
+            
+            <hr style="margin: 2rem 0; border: 1px solid #dee2e6;">
+            
+            <h3><i class="fas fa-bell"></i> Notification Preferences</h3>
+            <div class="grid grid-3">
+                <div class="checkbox">
+                    <input type="checkbox" name="scan_notifications" id="scan_notifications" 
+                           {% if not settings or settings.scan_notifications %}checked{% endif %}>
+                    <label for="scan_notifications">
+                        <strong>Scan Completion</strong><br>
+                        <small>Notify when scans finish</small>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" name="finding_notifications" id="finding_notifications"
+                           {% if not settings or settings.finding_notifications %}checked{% endif %}>
+                    <label for="finding_notifications">
+                        <strong>Critical Findings</strong><br>
+                        <small>Notify on high/critical secrets</small>
+                    </label>
+                </div>
+                <div class="checkbox">
+                    <input type="checkbox" name="monitor_notifications" id="monitor_notifications"
+                           {% if not settings or settings.monitor_notifications %}checked{% endif %}>
+                    <label for="monitor_notifications">
+                        <strong>Monitor Changes</strong><br>
+                        <small>Notify on JS file changes</small>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <button type="submit" class="btn btn-lg">
+                    <i class="fas fa-save"></i> Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Setup Help -->
+<div class="card">
+    <div class="card-header">
+        <i class="fas fa-question-circle"></i> Setup Help
+    </div>
+    <div class="card-body">
+        <div class="grid grid-2">
+            <div>
+                <h3><i class="fab fa-telegram"></i> Telegram Setup:</h3>
+                <ol style="padding-left: 1.5rem;">
+                    <li>Message <code>@BotFather</code> on Telegram</li>
+                    <li>Send <code>/newbot</code> and follow instructions</li>
+                    <li>Copy the bot token</li>
+                    <li>Add bot to your chat/group</li>
+                    <li>Get chat ID from <code>@userinfobot</code></li>
+                </ol>
+            </div>
+            
+            <div>
+                <h3><i class="fab fa-discord"></i> Discord Setup:</h3>
+                <ol style="padding-left: 1.5rem;">
+                    <li>Go to Server Settings</li>
+                    <li>Click Integrations → Webhooks</li>
+                    <li>Create New Webhook</li>
+                    <li>Copy Webhook URL</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="mt-4 p-3" style="background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;">
+            <h4><i class="fas fa-info-circle"></i> Notification Types:</h4>
+            <ul style="margin: 0; padding-left: 1.5rem;">
+                <li><strong>Scan Completion:</strong> Get notified when any scan finishes</li>
+                <li><strong>Critical Findings:</strong> Get alerted when high or critical severity secrets are found</li>
+                <li><strong>Monitor Changes:</strong> Get notified when monitored JavaScript files change</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Hidden forms for testing -->
+<form method="POST" action="{{ url_for('test_telegram') }}" id="testTelegramForm" style="display: none;">
+    <input type="hidden" name="telegram_bot_token" id="testTelegramToken">
+    <input type="hidden" name="telegram_chat_id" id="testTelegramChat">
+</form>
+
+<form method="POST" action="{{ url_for('test_discord') }}" id="testDiscordForm" style="display: none;">
+    <input type="hidden" name="discord_webhook_url" id="testDiscordWebhook">
+</form>
+
+<script>
+function testTelegram() {
+    const token = document.querySelector('input[name="telegram_bot_token"]').value;
+    const chatId = document.querySelector('input[name="telegram_chat_id"]').value;
+    
+    if (!token || !chatId) {
+        alert('Please enter both Bot Token and Chat ID');
+        return;
+    }
+    
+    document.getElementById('testTelegramToken').value = token;
+    document.getElementById('testTelegramChat').value = chatId;
+    document.getElementById('testTelegramForm').submit();
+}
+
+function testDiscord() {
+    const webhookUrl = document.querySelector('input[name="discord_webhook_url"]').value;
+    
+    if (!webhookUrl) {
+        alert('Please enter Discord Webhook URL');
+        return;
+    }
+    
+    document.getElementById('testDiscordWebhook').value = webhookUrl;
+    document.getElementById('testDiscordForm').submit();
+}
+</script>
+{% endblock %}

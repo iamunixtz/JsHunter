@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Scan - Rezon{% endblock %}
+
+{% block content %}
+<div class="flex flex-between mb-3">
+    <h1>JavaScript Secret Scanner</h1>
+    {% if project %}
+    <a href="{{ url_for('project_detail', project_id=project.id) }}" class="btn btn-outline">Back to Project</a>
+    {% else %}
+    <a href="{{ url_for('index') }}" class="btn btn-outline">Back to Home</a>
+    {% endif %}
+</div>
+
+{% if project %}
+<div class="card mb-3">
+    <div class="card-body">
+        <strong>Project:</strong> {{ project.name }}
+    </div>
+</div>
+{% endif %}
+
+<!-- Project Selection -->
+{% if not project %}
+<div class="card">
+    <div class="card-header">Select Project</div>
+    <div class="card-body">
+        <div class="form-group">
+            <select class="form-select" id="projectSelect">
+                <option value="">Choose a project...</option>
+                {% for proj in projects %}
+                <option value="{{ proj.id }}">{{ proj.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <a href="{{ url_for('create_project') }}" class="btn btn-outline">Create New Project</a>
+    </div>
+</div>
+{% endif %}
+
+<!-- Scan Configuration -->
+<div class="card">
+    <div class="card-header">Scan Configuration</div>
+    <div class="card-body">
+        <div class="tabs">
+            <ul class="tab-list">
+                <li><button class="tab-button" onclick="showTab('url-scan')">Single URL</button></li>
+                <li><button class="tab-button" onclick="showTab('bulk-scan')">Bulk URLs</button></li>
+                <li><button class="tab-button" onclick="showTab('code-scan')">Code Input</button></li>
+            </ul>
+        </div>
+        
+        <div id="url-scan" class="tab-pane">
+            <div class="form-group">
+                <label class="form-label">JavaScript URL</label>
+                <input type="url" class="form-control" id="urlInput" 
+                       placeholder="https://example.com/script.js" value="{{ quick_url or '' }}">
+            </div>
+        </div>
+        
+        <div id="bulk-scan" class="tab-pane">
+            <div class="form-group">
+                <label class="form-label">Upload URL List</label>
+                <input type="file" class="form-control" id="bulkFileInput" accept=".txt">
+                <small>Upload a .txt file with one JavaScript URL per line</small>
+            </div>
+        </div>
+        
+        <div id="code-scan" class="tab-pane">
+            <div class="form-group">
+                <label class="form-label">JavaScript Code</label>
+                <textarea class="form-control" id="codeInput" rows="10" 
+                          placeholder="Paste your JavaScript code here...">{{ quick_code or '' }}</textarea>
+            </div>
+            <div class="flex flex-gap">
+                <button type="button" class="btn btn-outline" onclick="beautifyCode()">Beautify Code</button>
+                <button type="button" class="btn btn-outline" onclick="decodeCode()">Decode Code</button>
+            </div>
+        </div>
+        
+        <!-- Scan Progress -->
+        <div id="scanProgress" class="hidden">
+            <div class="progress">
+                <div class="progress-bar" style="width: 0%"></div>
+            </div>
+            <p id="progressText">Scanning in progress...</p>
+        </div>
+        
+        <div class="mt-3">
+            <button type="button" class="btn" id="scanButton" onclick="startScan()">Start Scan</button>
+        </div>
+    </div>
+</div>
+
+<script>
+const projectId = '{{ project.id if project else "" }}';
+
+function getCurrentScanType() {
+    const activeTab = document.querySelector('.tab-button.active');
+    if (!activeTab) return 'url';
+    const tabText = activeTab.textContent.toLowerCase();
+    if (tabText.includes('bulk')) return 'bulk';
+    if (tabText.includes('code')) return 'code';
+    return 'url';
+}
+
+function getSelectedProject() {
+    if (projectId) return projectId;
+    const projectSelect = document.getElementById('projectSelect');
+    return projectSelect ? projectSelect.value : '';
+}
+
+async function startScan() {
+    const scanButton = document.getElementById('scanButton');
+    const scanProgress = document.getElementById('scanProgress');
+    const progressBar = scanProgress.querySelector('.progress-bar');
+    const progressText = document.getElementById('progressText');
+    
+    try {
+        const selectedProject = getSelectedProject();
+        if (!selectedProject) {
+            alert('Please select a project first');
+            return;
+        }
+        
+        scanButton.disabled = true;
+        scanProgress.classList.remove('hidden');
+        
+        const scanType = getCurrentScanType();
+        const formData = new FormData();
+        
+        formData.append('project_id', selectedProject);
+        
+        if (scanType === 'url') {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert('Please enter a URL to scan');
+                return;
+            }
+            formData.append('scan_type', 'url');
+            formData.append('url', url);
+            
+        } else if (scanType === 'bulk') {
+            const fileInput = document.getElementById('bulkFileInput');
+            if (!fileInput.files.length) {
+                alert('Please select a file to upload');
+                return;
+            }
+            formData.append('scan_type', 'file');
+            formData.append('file', fileInput.files[0]);
+            progressText.textContent = 'Processing bulk URLs...';
+            
+        } else if (scanType === 'code') {
+            const code = document.getElementById('codeInput').value;
+            if (!code.trim()) {
+                alert('Please enter some code to scan');
+                return;
+            }
+            formData.append('scan_type', 'code');
+            formData.append('content', code);
+        }
+        
+        // Simulate progress
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 10;
+            progressBar.style.width = progress + '%';
+            if (progress >= 90) {
+                clearInterval(progressInterval);
+            }
+        }, 500);
+        
+        const response = await fetch('/scan/execute', {
+            method: 'POST',
+            body: formData
+        });
+        
+        clearInterval(progressInterval);
+        progressBar.style.width = '100%';
+        
+        if (response.ok) {
+            if (response.redirected) {
+                window.location.href = response.url;
+            } else {
+                const result = await response.json();
+                if (result.success) {
+                    setTimeout(() => {
+                        window.location.href = `/scan/${result.scan_id}/results`;
+                    }, 1000);
+                } else {
+                    alert('Scan failed: ' + result.error);
+                }
+            }
+        } else {
+            const errorText = await response.text();
+            alert('Scan failed: ' + errorText);
+        }
+        
+    } catch (error) {
+        alert('Scan failed: ' + error.message);
+    } finally {
+        scanButton.disabled = false;
+        setTimeout(() => {
+            scanProgress.classList.add('hidden');
+            progressBar.style.width = '0%';
+            progressText.textContent = 'Scanning in progress...';
+        }, 2000);
+    }
+}
+
+function beautifyCode() {
+    const codeInput = document.getElementById('codeInput');
+    const code = codeInput.value;
+    
+    if (!code.trim()) {
+        alert('Please enter some code first');
+        return;
+    }
+    
+    try {
+        // Simple beautification
+        let beautified = code
+            .replace(/\{/g, ' {\n    ')
+            .replace(/\}/g, '\n}\n')
+            .replace(/;/g, ';\n')
+            .replace(/,/g, ',\n    ');
+        
+        codeInput.value = beautified;
+    } catch (error) {
+        alert('Beautification failed: ' + error.message);
+    }
+}
+
+function decodeCode() {
+    const codeInput = document.getElementById('codeInput');
+    let code = codeInput.value;
+    
+    if (!code.trim()) {
+        alert('Please enter some code first');
+        return;
+    }
+    
+    try {
+        code = decodeURIComponent(code);
+        code = code.replace(/&quot;/g, '"')
+                  .replace(/&#x27;/g, "'")
+                  .replace(/&lt;/g, '<')
+                  .replace(/&gt;/g, '>')
+                  .replace(/&amp;/g, '&');
+        
+        codeInput.value = code;
+    } catch (error) {
+        alert('Decoding failed: ' + error.message);
+    }
+}
+</script>
+{% endblock %}
