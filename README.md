@@ -90,7 +90,7 @@ js-ninja/
 - Educational workshops
 - CTF competitions
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 
