@@ -1,6 +1,0 @@
-Flask==2.3.3
-Flask-SQLAlchemy==3.0.5
-requests==2.31.0
-jsbeautifier==1.14.9
-colorama==0.4.6
-werkzeug==2.3.7 # Added for password hashing
