@@ -108,7 +108,7 @@ The easiest way to run JS Ninja is using Docker and Docker Compose:
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/js-ninja.git
+   git clone https://github.com/iamunixtz/JSNinja/
    cd js-ninja
    ```
 
@@ -295,7 +295,7 @@ Contributions are welcome! Please feel free to submit a Pull Request. For major 
 ### Development Setup
 
 ```bash
-git clone https://github.com/yourusername/js-ninja.git
+git clone https://github.com/iamunixtz/JSNinja/
 cd js-ninja
 # Set up each component as needed
 ```
