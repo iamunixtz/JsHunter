@@ -318,25 +318,8 @@ If you encounter any issues or have questions:
 2. Search existing issues on GitHub
 3. Create a new issue with detailed information
 
----
-
 **Disclaimer**: This tool is for educational and authorized security testing purposes only. Always ensure you have permission before scanning any systems or files that don't belong to you.
 
-## GitHub Repository Setup
 
-To push this project to GitHub:
-
-1. Create a new repository on GitHub
-2. Initialize Git in the project folder:
-   ```bash
-   git init
-   git add .
-   git commit -m "Initial commit"
-   git branch -M main
-   git remote add origin https://github.com/yourusername/js-ninja.git
-   git push -u origin main
-   ```
-3. Ensure you don't commit any sensitive information:
-   - Add bot tokens and API keys to `.gitignore`
    - Use environment variables for sensitive configuration
    - Review code for hardcoded credentials before pushing
