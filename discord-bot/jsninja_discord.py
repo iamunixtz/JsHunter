@@ -7,6 +7,9 @@ import tempfile
 from pathlib import Path
 import logging
 from typing import Optional
+import re
+import requests
+from urllib.parse import urlparse
 
 import discord
 from discord.ext import commands
@@ -35,6 +38,34 @@ bot = commands.Bot(command_prefix='!', intents=intents)
 def is_user_authorized(user_id: int) -> bool:
     """Check if a user is authorized to use the bot."""
     return len(config.ALLOWED_USER_IDS) == 0 or user_id in config.ALLOWED_USER_IDS
+
+def safe_filename_from_url(url: str) -> str:
+    """Generate a safe filename from URL."""
+    parsed = urlparse(url)
+    fname = parsed.path.split("/")[-1] or "downloaded"
+    fname = re.sub(r"[^\w.-]", "_", fname)
+    if not fname.endswith(".js"):
+        fname += ".js"
+    fname = re.sub(r"_+", "_", fname).strip("_")
+    return fname
+
+def download_js_from_url(url: str) -> Path | None:
+    """Download JavaScript file from URL."""
+    try:
+        response = requests.get(url, timeout=30, verify=True)
+        response.raise_for_status()
+        
+        # Create temp file
+        fname = safe_filename_from_url(url)
+        temp_file = Path(config.TEMP_DIR) / fname
+        
+        with open(temp_file, "w", encoding="utf-8", errors="ignore") as f:
+            f.write(response.text)
+        
+        return temp_file
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to download {url}: {e}")
+        return None
 
 def format_findings_embed(findings: list[dict], filename: str) -> discord.Embed:
     """Format findings into a Discord embed."""
@@ -275,6 +306,129 @@ async def status_command(ctx):
     
     await ctx.send(embed=embed)
 
+@bot.command(name='scanurl')
+async def scanurl_command(ctx, url: str = None):
+    """Scan a JavaScript file from URL for secrets."""
+    if not is_user_authorized(ctx.author.id):
+        await ctx.send("❌ You are not authorized to use this bot.")
+        return
+    
+    if not url:
+        embed = discord.Embed(
+            title="❌ Missing URL",
+            description="Please provide a URL to scan.",
+            color=discord.Color.red()
+        )
+        embed.add_field(
+            name="Usage",
+            value="`!scanurl <URL>`",
+            inline=False
+        )
+        embed.add_field(
+            name="Example",
+            value="`!scanurl https://example.com/script.js`",
+            inline=False
+        )
+        await ctx.send(embed=embed)
+        return
+    
+    # Validate URL
+    try:
+        parsed = urlparse(url)
+        if not parsed.scheme or not parsed.netloc:
+            embed = discord.Embed(
+                title="❌ Invalid URL",
+                description="Please provide a valid HTTP/HTTPS URL.",
+                color=discord.Color.red()
+            )
+            await ctx.send(embed=embed)
+            return
+    except Exception:
+        embed = discord.Embed(
+            title="❌ Invalid URL Format",
+            description="The provided URL format is invalid.",
+            color=discord.Color.red()
+        )
+        await ctx.send(embed=embed)
+        return
+    
+    # Send initial response
+    embed = discord.Embed(
+        title="📥 Processing URL",
+        description=f"Downloading and scanning: `{url}`",
+        color=discord.Color.blue()
+    )
+    message = await ctx.send(embed=embed)
+    
+    try:
+        # Download file
+        temp_file = download_js_from_url(url)
+        if not temp_file:
+            embed = discord.Embed(
+                title="❌ Download Failed",
+                description="Failed to download the file from the provided URL.",
+                color=discord.Color.red()
+            )
+            await message.edit(embed=embed)
+            return
+        
+        # Ensure we have trufflehog
+        tr_bin = _find_trufflehog()
+        if not tr_bin:
+            embed = discord.Embed(
+                title="🔄 Installing TruffleHog",
+                description="TruffleHog not found. Installing...",
+                color=discord.Color.blue()
+            )
+            await message.edit(embed=embed)
+            try:
+                tr_bin = setup_trufflehog()
+            except Exception as e:
+                embed = discord.Embed(
+                    title="❌ Installation Failed",
+                    description=f"Failed to install TruffleHog: {str(e)}",
+                    color=discord.Color.red()
+                )
+                await message.edit(embed=embed)
+                return
+        
+        # Update status
+        embed = discord.Embed(
+            title="🔍 Scanning URL",
+            description=f"Running security scan on: `{url}`",
+            color=discord.Color.blue()
+        )
+        await message.edit(embed=embed)
+        
+        # Scan the file
+        findings = run_trufflehog(tr_bin, temp_file)
+        
+        # Send results
+        filename = safe_filename_from_url(url)
+        result_embed = format_findings_embed(findings, f"{url} ({filename})")
+        await message.edit(embed=result_embed)
+        
+        # Save detailed results if findings exist
+        if findings:
+            fname_base = safe_filename_from_url(url).rsplit(".js", 1)[0]
+            json_path = Path(config.RESULTS_DIR) / f"{fname_base}_results.json"
+            with open(json_path, "w", encoding="utf-8") as f:
+                for obj in findings:
+                    f.write(json.dumps(obj) + "\n")
+        
+        # Cleanup
+        if temp_file.exists():
+            temp_file.unlink()
+            
+    except Exception as e:
+        logger.error(f"Error scanning URL {url}: {e}")
+        embed = discord.Embed(
+            title="❌ Scan Error",
+            description=f"Error processing URL: {str(e)}",
+            color=discord.Color.red()
+        )
+        await message.edit(embed=embed)
+
 @bot.command(name='help')
 async def help_command(ctx):
     """Show help information."""
@@ -287,6 +441,12 @@ async def help_command(ctx):
     embed.add_field(
         name="!scan",
         value="Attach a JavaScript file and use this command to scan it for secrets.",
+        inline=False
+    )
+    
+    embed.add_field(
+        name="!scanurl <URL>",
+        value="Scan a JavaScript file from a URL for secrets.",
         inline=False
     )
     

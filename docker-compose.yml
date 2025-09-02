@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  cli:
+    build:
+      context: ./cli
+      dockerfile: Dockerfile
+    volumes:
+      - ./downloads:/app/downloads
+      - ./results:/app/results
+      - ./.bin:/app/.bin
+    environment:
+      - PYTHONUNBUFFERED=1
+
+  telegram-bot:
+    build:
+      context: .
+      dockerfile: telegram-bot/Dockerfile
+    volumes:
+      - ./temp:/app/temp
+      - ./results:/app/results
+      - ./.bin:/app/.bin
+    environment:
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - cli
+
+  discord-bot:
+    build:
+      context: .
+      dockerfile: discord-bot/Dockerfile
+    volumes:
+      - ./temp:/app/temp
+      - ./results:/app/results
+      - ./.bin:/app/.bin
+    environment:
+      - DISCORD_BOT_TOKEN=${DISCORD_BOT_TOKEN}
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
+    depends_on:
+      - cli
+
+networks:
+  default:
+    name: jsninja-network

@@ -11,10 +11,13 @@ JS Ninja is a comprehensive security scanner suite designed to detect secrets, A
 - **Advanced Secret Detection**: Powered by TruffleHog's robust detection engine
 - **Multi-Format Support**: Supports `.js`, `.jsx`, `.ts`, `.tsx` files
 - **Multiple Interfaces**: CLI, Telegram Bot, and Discord Bot
+- **URL Scanning**: Direct scanning of JavaScript files from URLs
 - **Auto-Installation**: Automatic TruffleHog setup and management
 - **Detailed Reports**: JSON output with verification status and line numbers
 - **Access Control**: User authorization for bot versions
 - **Zero False Positives**: Advanced filtering and verification
+- **Docker Support**: Easy deployment with Docker and Docker Compose
+- **Cross-Platform**: Runs on Windows, Linux, and macOS
 
 ## Project Structure
 
@@ -90,14 +93,41 @@ js-ninja/
 - Educational workshops
 - CTF competitions
 
-## 🔧 Installation & Setup
+## Installation & Setup
 
 ### Prerequisites
 
 - Python 3.8 or higher
+- Git (for cloning the repository)
 - Internet connection (for TruffleHog download)
+- Docker and Docker Compose (optional, for containerized deployment)
 
-### CLI Tool Setup
+### Option 1: Docker Deployment (Recommended)
+
+The easiest way to run JS Ninja is using Docker and Docker Compose:
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/js-ninja.git
+   cd js-ninja
+   ```
+
+2. Create a `.env` file with your bot tokens:
+   ```bash
+   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
+   DISCORD_BOT_TOKEN=your_discord_bot_token
+   ```
+
+3. Start the services:
+   ```bash
+   docker-compose up -d
+   ```
+
+This will start all components (CLI, Telegram bot, and Discord bot) in separate containers with proper volume mapping and networking.
+
+### Option 2: Manual Installation
+
+#### CLI Tool Setup
 
 ```bash
 cd cli/
@@ -105,31 +135,74 @@ pip install -r requirements.txt
 python jsninja.py --setup  # Install TruffleHog
 ```
 
-### Telegram Bot Setup
+#### Telegram Bot Setup
 
-1. Create a bot with [@BotFather](https://t.me/botfather)
-2. Get your bot token
+1. Set up the environment:
+   ```bash
+   cd telegram-bot
+   python -m venv venv
+   
+   # Windows
+   .\venv\Scripts\activate
+   
+   # Linux/macOS
+   source venv/bin/activate
+   
+   pip install -r requirements.txt
+   ```
+
+2. Create a bot with [@BotFather](https://t.me/botfather):
+   - Send `/newbot` to BotFather
+   - Choose a name for your bot
+   - Choose a username ending in 'bot'
+   - Copy the provided token
+
 3. Configure the bot:
+   - Edit `config.py` and set your bot token
+   - Optionally set `ALLOWED_USER_IDS` for access control
 
-```bash
-cd telegram-bot/
-pip install -r requirements.txt
-# Edit config.py and set your bot token
-python jsninja_bot.py
-```
+4. Start the bot:
+   ```bash
+   python jsninja_bot.py
+   ```
 
-### Discord Bot Setup
+#### Discord Bot Setup
 
-1. Create a Discord application at [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a bot and get the token
+1. Set up the environment:
+   ```bash
+   cd discord-bot
+   python -m venv venv
+   
+   # Windows
+   .\venv\Scripts\activate
+   
+   # Linux/macOS
+   source venv/bin/activate
+   
+   pip install -r requirements.txt
+   ```
+
+2. Create a Discord application:
+   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
+   - Click "New Application" and name it
+   - Go to "Bot" section and click "Add Bot"
+   - Copy the bot token
+   - Enable necessary Privileged Gateway Intents
+
 3. Configure the bot:
+   - Edit `config.py` and set your bot token
+   - Optionally set `ALLOWED_USER_IDS` for access control
 
-```bash
-cd discord-bot/
-pip install -r requirements.txt
-# Edit config.py and set your bot token
-python jsninja_discord.py
-```
+4. Invite the bot to your server:
+   - Go to OAuth2 > URL Generator
+   - Select "bot" scope and required permissions
+   - Copy and open the generated URL
+   - Choose your server and authorize
+
+5. Start the bot:
+   ```bash
+   python jsninja_discord.py
+   ```
 
 ## Usage Examples
 
@@ -153,15 +226,36 @@ python jsninja.py -u "https://example.com/app.js" --discord-webhook "webhook-url
 
 1. Start chat with your bot
 2. Send `/start` for help
-3. Upload a JavaScript file
+3. Either:
+   - Upload a JavaScript file
+   - Use `/scanurl <URL>` to scan a JavaScript file from URL
 4. Receive scan results instantly
+
+Available commands:
+```
+/start         # Show welcome message and help
+/status        # Check bot status and supported features
+/scanurl       # Scan JavaScript file from URL
+/help          # Show available commands
+```
 
 ### Discord Bot Usage
 
+Available commands:
 ```
 !help          # Show available commands
 !status        # Check bot status
 !scan          # Attach a file and use this command
+!scanurl       # Scan JavaScript file from URL (!scanurl <URL>)
+```
+
+Example URL scanning:
+```
+# Telegram Bot
+/scanurl https://example.com/app.js
+
+# Discord Bot
+!scanurl https://example.com/app.js
 ```
 
 ## Detection Capabilities

@@ -6,6 +6,10 @@ from pathlib import Path
 import logging
 from typing import Optional
 import tempfile
+import json
+import requests
+import re
+from urllib.parse import urlparse
 
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -34,11 +38,14 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> N
 
 I can help you scan JavaScript files for potential secrets and vulnerabilities.
 
-Just send me a JavaScript file (supported extensions: .js, .jsx, .ts, .tsx) and I'll scan it using TruffleHog.
+You can:
+• Send me a JavaScript file (supported extensions: .js, .jsx, .ts, .tsx)
+• Use /scanurl <URL> to scan a JavaScript file from a URL
 
 Commands:
 /start - Show this help message
 /status - Check bot and TruffleHog status
+/scanurl <URL> - Scan a JavaScript file from URL
 """
     await update.message.reply_text(welcome_text)
 
@@ -61,9 +68,101 @@ async def status_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     
     await update.message.reply_text(status_text)
 
+async def scanurl_command(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    """Handle /scanurl command."""
+    if not is_user_authorized(update.effective_user.id):
+        await update.message.reply_text("❌ You are not authorized to use this bot.")
+        return
+    
+    if not context.args:
+        await update.message.reply_text("❌ Please provide a URL to scan.\nUsage: /scanurl <URL>")
+        return
+    
+    url = context.args[0]
+    
+    # Validate URL
+    try:
+        parsed = urlparse(url)
+        if not parsed.scheme or not parsed.netloc:
+            await update.message.reply_text("❌ Invalid URL format. Please provide a valid HTTP/HTTPS URL.")
+            return
+    except Exception:
+        await update.message.reply_text("❌ Invalid URL format.")
+        return
+    
+    # Check TruffleHog availability
+    tr_bin = _find_trufflehog()
+    if not tr_bin:
+        await update.message.reply_text("❌ TruffleHog not found. Please contact administrator.")
+        return
+    
+    await update.message.reply_text(f"🔍 Downloading and scanning: {url}\nPlease wait...")
+    
+    try:
+        # Download file
+        temp_file = download_js_from_url(url)
+        if not temp_file:
+            await update.message.reply_text("❌ Failed to download the file from URL.")
+            return
+        
+        # Scan file
+        findings = run_trufflehog(tr_bin, temp_file)
+        
+        # Format and send results
+        if findings:
+            message = format_findings_message(findings)
+            await update.message.reply_text(f"🚨 **Secrets Found in {url}**\n\n{message}")
+            
+            # Save detailed results
+            fname_base = safe_filename_from_url(url).rsplit(".js", 1)[0]
+            json_path = Path(config.RESULTS_DIR) / f"{fname_base}_results.json"
+            with open(json_path, "w", encoding="utf-8") as f:
+                for obj in findings:
+                    f.write(json.dumps(obj) + "\n")
+            
+            await update.message.reply_text(f"📄 Detailed results saved to: {json_path.name}")
+        else:
+            await update.message.reply_text(f"✅ No secrets found in {url}")
+        
+        # Cleanup
+        if temp_file.exists():
+            temp_file.unlink()
+            
+    except Exception as e:
+        logger.error(f"Error scanning URL {url}: {e}")
+        await update.message.reply_text(f"❌ Error scanning URL: {str(e)}")
+
 def is_user_authorized(user_id: int) -> bool:
     """Check if a user is authorized to use the bot."""
     return len(config.ALLOWED_USER_IDS) == 0 or user_id in config.ALLOWED_USER_IDS
+
+def safe_filename_from_url(url: str) -> str:
+    """Generate a safe filename from URL."""
+    parsed = urlparse(url)
+    fname = parsed.path.split("/")[-1] or "downloaded"
+    fname = re.sub(r"[^\w.-]", "_", fname)
+    if not fname.endswith(".js"):
+        fname += ".js"
+    fname = re.sub(r"_+", "_", fname).strip("_")
+    return fname
+
+def download_js_from_url(url: str) -> Path | None:
+    """Download JavaScript file from URL."""
+    try:
+        response = requests.get(url, timeout=30, verify=True)
+        response.raise_for_status()
+        
+        # Create temp file
+        fname = safe_filename_from_url(url)
+        temp_file = Path(config.TEMP_DIR) / fname
+        
+        with open(temp_file, "w", encoding="utf-8", errors="ignore") as f:
+            f.write(response.text)
+        
+        return temp_file
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Failed to download {url}: {e}")
+        return None
 
 def format_findings_message(findings: list[dict]) -> str:
     """Format findings into a Telegram message."""
@@ -182,6 +281,7 @@ def main() -> None:
     # Add handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("status", status_command))
+    application.add_handler(CommandHandler("scanurl", scanurl_command))
     application.add_handler(MessageHandler(filters.Document.ALL, handle_file))
 
     # Start the bot
