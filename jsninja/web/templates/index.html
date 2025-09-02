@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Ninja - JavaScript Security Scanner</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <style>
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen" x-data="scannerApp()">
+    <nav class="bg-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex">
+                    <div class="flex-shrink-0 flex items-center">
+                        <img class="h-8 w-auto" src="/static/img/logo.svg" alt="JS Ninja">
+                        <span class="ml-2 text-xl font-bold text-gray-900">JS Ninja</span>
+                    </div>
+                </div>
+                <div class="flex items-center">
+                    <script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="your-username" data-color="#FFDD00" data-emoji="" data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff"></script>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div class="px-4 py-6 sm:px-0">
+            <div class="bg-white shadow rounded-lg p-6">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-4">Scan JavaScript Files</h2>
+                    <p class="text-gray-600">Upload a JavaScript file or provide a URL to scan for secrets and sensitive information.</p>
+                </div>
+
+                <!-- File Upload -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Upload File</h3>
+                    <form @submit.prevent="uploadFile" class="space-y-4">
+                        <div class="flex items-center justify-center w-full">
+                            <label class="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300">
+                                <div class="flex flex-col items-center justify-center pt-7">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-gray-400 group-hover:text-gray-600" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                                    </svg>
+                                    <p class="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
+                                        Select a file
+                                    </p>
+                                </div>
+                                <input type="file" class="opacity-0" accept=".js,.jsx,.ts,.tsx" @change="handleFileSelect" />
+                            </label>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Upload and Scan
+                        </button>
+                    </form>
+                </div>
+
+                <!-- URL Input -->
+                <div class="mb-8">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Scan URL</h3>
+                    <form @submit.prevent="scanUrl" class="space-y-4">
+                        <div>
+                            <label for="url" class="sr-only">JavaScript URL</label>
+                            <input type="url" id="url" x-model="url" placeholder="https://example.com/script.js" class="block w-full shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2">
+                            Scan URL
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Results -->
+                <div x-show="results.length > 0" class="mt-8">
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Scan Results</h3>
+                    <div class="bg-white shadow overflow-hidden sm:rounded-md">
+                        <ul class="divide-y divide-gray-200">
+                            <template x-for="(result, index) in results" :key="index">
+                                <li class="px-4 py-4">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex-1">
+                                            <p class="text-sm font-medium text-gray-900" x-text="result.detector_name"></p>
+                                            <p class="text-sm text-gray-500">
+                                                Line <span x-text="result.line_number"></span>
+                                                <span x-show="result.verified" class="ml-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                                    Verified
+                                                </span>
+                                            </p>
+                                        </div>
+                                    </div>
+                                </li>
+                            </template>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Loading State -->
+                <div x-show="loading" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
+                    <div class="bg-white p-6 rounded-lg">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+                        <p class="mt-4 text-gray-900">Scanning...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        function scannerApp() {
+            return {
+                file: null,
+                url: '',
+                results: [],
+                loading: false,
+
+                handleFileSelect(event) {
+                    this.file = event.target.files[0];
+                },
+
+                async uploadFile() {
+                    if (!this.file) return;
+
+                    this.loading = true;
+                    const formData = new FormData();
+                    formData.append('file', this.file);
+
+                    try {
+                        const response = await fetch('/scan/file', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        this.results = data.results;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while scanning the file.');
+                    } finally {
+                        this.loading = false;
+                    }
+                },
+
+                async scanUrl() {
+                    if (!this.url) return;
+
+                    this.loading = true;
+                    const formData = new FormData();
+                    formData.append('url', this.url);
+
+                    try {
+                        const response = await fetch('/scan/url', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const data = await response.json();
+                        this.results = data.results;
+                    } catch (error) {
+                        console.error('Error:', error);
+                        alert('An error occurred while scanning the URL.');
+                    } finally {
+                        this.loading = false;
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

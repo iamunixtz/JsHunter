@@ -25,21 +25,64 @@ JS Ninja is a comprehensive security scanner suite designed to detect secrets, A
 js-ninja/
 ├── cli/                    # Command Line Interface
 │   ├── jsninja.py         # Main CLI application
+│   ├── Dockerfile         # CLI Docker configuration
 │   └── requirements.txt   # CLI dependencies
 ├── telegram-bot/          # Telegram Bot Interface
 │   ├── jsninja_bot.py    # Telegram bot implementation
 │   ├── config.py         # Bot configuration
+│   ├── Dockerfile        # Telegram bot Docker configuration
 │   └── requirements.txt  # Telegram bot dependencies
 ├── discord-bot/           # Discord Bot Interface
 │   ├── jsninja_discord.py # Discord bot implementation
 │   ├── config.py         # Bot configuration
+│   ├── Dockerfile        # Discord bot Docker configuration
 │   └── requirements.txt  # Discord bot dependencies
-└── README.md             # This file
+├── jsninja/              # PyPI Package
+│   ├── __init__.py      # Package initialization
+│   ├── cli/             # CLI module
+│   └── web/             # Web Interface
+│       ├── main.py      # FastAPI application
+│       ├── templates/   # HTML templates
+│       └── static/      # Static assets
+├── .github/              # GitHub Configuration
+│   └── workflows/       # GitHub Actions workflows
+├── setup.py             # Package configuration
+├── docker-compose.yml   # Docker Compose configuration
+└── README.md            # This file
 ```
+
+## Installation from PyPI
+
+The easiest way to install JS Ninja is through pip:
+
+```bash
+pip install jsninja-scanner
+```
+
+This will install both the CLI tool and the web interface.
 
 ## Tool Descriptions
 
-### 1. CLI Tool (`cli/jsninja.py`)
+### 1. Web Interface
+
+**Functionality**: Modern web interface for scanning JavaScript files and URLs.
+
+**Key Features**:
+- File upload and URL scanning
+- Modern, responsive UI
+- IP-based result tracking
+- Automatic deployment on GitHub Pages
+- Results saved per user session
+- Buy Me a Coffee integration
+
+**Access**: Visit [https://yourusername.github.io/jsninja](https://yourusername.github.io/jsninja)
+
+To run the web interface locally:
+```bash
+jsninja-web
+```
+
+### 2. CLI Tool (`cli/jsninja.py`)
 
 **Functionality**: Command-line interface for scanning JavaScript files from URLs or local file lists.
 
