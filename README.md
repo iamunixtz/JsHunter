@@ -1,8 +1,6 @@
 <center>
    <h1 style="text-align:center;">JS Ninja — JavaScript Security Scanner Suite</h1>
-
 </center>
-
 <p align="center">
   <img src="https://img.shields.io/badge/Version-1.0-green?style=for-the-badge">
   <img src="https://img.shields.io/github/license/iamunixtz/JSNinja?style=for-the-badge">
@@ -17,12 +15,13 @@
 
 JS Ninja is a comprehensive, open-source security scanner suite specifically engineered to identify and extract secrets, API keys, credentials, and other sensitive information embedded within JavaScript files. Leveraging the advanced detection capabilities of TruffleHog, it offers robust scanning across various file formats and deployment scenarios. This tool is particularly valuable for security researchers, developers, and teams conducting vulnerability assessments, as it helps mitigate risks associated with accidental exposure of sensitive data in code repositories, web applications, and build artifacts.
 
-The suite includes three distinct interfaces—CLI, Telegram Bot, and Discord Bot—each tailored to different user workflows, from automated scripts in CI/CD pipelines to interactive, collaborative environments. By supporting direct URL scanning, batch processing, and containerized deployment, JS Ninja ensures flexibility, scalability, and ease of integration into existing security practices.
+The suite includes four distinct interfaces—Web, CLI, Telegram Bot, and Discord Bot—each tailored to different user workflows, from browser-based interactions to automated scripts in CI/CD pipelines and collaborative environments. By supporting direct URL scanning, batch processing, and containerized deployment, JS Ninja ensures flexibility, scalability, and ease of integration into existing security practices.
 
 ## Table of Contents
 
 - [Features](#features)
 - [Project Structure](#project-structure)
+- [Installation from PyPI](#installation-from-pypi)
 - [Tool Descriptions](#tool-descriptions)
 - [Installation & Setup](#installation--setup)
 - [Usage Examples](#usage-examples)
@@ -39,7 +38,7 @@ The suite includes three distinct interfaces—CLI, Telegram Bot, and Discord Bo
 
 - **Advanced Secret Detection**: Utilizes TruffleHog's sophisticated regex-based and entropy-checking engine to identify a wide array of secrets with high accuracy, reducing the need for manual review.
 - **Multi-Format Support**: Seamlessly handles JavaScript (.js), JSX (.jsx), TypeScript (.ts), and TSX (.tsx) files, accommodating modern web development stacks like React and Node.js.
-- **Multiple Interfaces**: Provides a command-line tool for scripting and automation, a Telegram Bot for mobile-friendly interactions, and a Discord Bot for team-based collaboration within servers.
+- **Multiple Interfaces**: Provides a web interface for browser-based scanning, a command-line tool for scripting and automation, a Telegram Bot for mobile-friendly interactions, and a Discord Bot for team-based collaboration within servers.
 - **URL Scanning**: Enables direct fetching and analysis of JavaScript files from remote URLs, ideal for scanning public assets without local downloads.
 - **Auto-Installation**: Automatically downloads and configures TruffleHog during setup, eliminating manual dependency management.
 - **Detailed Reports**: Generates structured JSON outputs including detection metadata, verification status (e.g., whether a key is active), line numbers for precise location, and redacted previews to avoid exposing full secrets.
@@ -55,33 +54,33 @@ The repository is organized into modular directories for each component, promoti
 
 ```
 js-ninja/
-<<<<<<< HEAD
-├── cli/                    # Command Line Interface
-│   ├── jsninja.py         # Main CLI application
-│   ├── Dockerfile         # CLI Docker configuration
-│   └── requirements.txt   # CLI dependencies
-├── telegram-bot/          # Telegram Bot Interface
+├── cli/                  # Command Line Interface
+│   ├── jsninja.py        # Main CLI application
+│   ├── Dockerfile        # CLI Docker configuration
+│   └── requirements.txt  # CLI dependencies
+├── telegram-bot/         # Telegram Bot Interface
 │   ├── jsninja_bot.py    # Telegram bot implementation
 │   ├── config.py         # Bot configuration
 │   ├── Dockerfile        # Telegram bot Docker configuration
 │   └── requirements.txt  # Telegram bot dependencies
-├── discord-bot/           # Discord Bot Interface
+├── discord-bot/          # Discord Bot Interface
 │   ├── jsninja_discord.py # Discord bot implementation
 │   ├── config.py         # Bot configuration
 │   ├── Dockerfile        # Discord bot Docker configuration
 │   └── requirements.txt  # Discord bot dependencies
 ├── jsninja/              # PyPI Package
-│   ├── __init__.py      # Package initialization
-│   ├── cli/             # CLI module
-│   └── web/             # Web Interface
-│       ├── main.py      # FastAPI application
-│       ├── templates/   # HTML templates
-│       └── static/      # Static assets
+│   ├── __init__.py       # Package initialization
+│   ├── cli/              # CLI module
+│   └── web/              # Web Interface
+│       ├── main.py       # FastAPI application
+│       ├── templates/    # HTML templates
+│       └── static/       # Static assets
 ├── .github/              # GitHub Configuration
-│   └── workflows/       # GitHub Actions workflows
-├── setup.py             # Package configuration
-├── docker-compose.yml   # Docker Compose configuration
-└── README.md            # This file
+│   └── workflows/        # GitHub Actions workflows
+├── setup.py              # Package configuration
+├── docker-compose.yml    # Docker Compose configuration
+├── LICENSE               # MIT License file
+└── README.md             # This documentation file
 ```
 
 ## Installation from PyPI
@@ -93,27 +92,6 @@ pip install jsninja-scanner
 ```
 
 This will install both the CLI tool and the web interface.
-=======
-├── cli/                  # Command-line interface module
-│   ├── jsninja.py        # Main CLI script for scanning operations
-│   └── requirements.txt  # Python dependencies for the CLI
-├── telegram-bot/         # Telegram Bot module
-│   ├── jsninja_bot.py    # Core bot logic for Telegram integration
-│   ├── config.py         # Configuration file for bot settings (e.g., tokens, user IDs)
-│   └── requirements.txt  # Dependencies specific to Telegram Bot
-├── discord-bot/          # Discord Bot module
-│   ├── jsninja_discord.py # Core bot logic for Discord integration
-│   ├── config.py         # Configuration file for bot settings (e.g., tokens, user IDs)
-│   └── requirements.txt  # Dependencies specific to Discord Bot
-├── docker/               # Docker-related files (optional, if added)
-│   ├── Dockerfile        # Base Docker image definition
-│   └── docker-compose.yml # Composition for multi-container setup
-├── LICENSE               # MIT License file
-└── README.md             # This documentation file
-```
-
-This structure allows users to install and run individual components independently or deploy the entire suite.
->>>>>>> 0499d5f101dde0a2b1235b662ea1aab54d993e1c
 
 ## Tool Descriptions
 
@@ -129,9 +107,10 @@ This structure allows users to install and run individual components independent
 - Results saved per user session
 - Buy Me a Coffee integration
 
-**Access**: Visit [https://yourusername.github.io/jsninja](https://yourusername.github.io/jsninja)
+**Access**: Visit [https://iamunixtz.github.io/JSNinja](https://iamunixtz.github.io/JSNinja)
 
 To run the web interface locally:
+
 ```bash
 jsninja-web
 ```
@@ -154,7 +133,7 @@ The CLI tool serves as the foundational interface for batch and automated scanni
 - Internal security audits of code repositories or deployed scripts.
 - Automated testing in penetration testing frameworks.
 
-### 2. Telegram Bot (`telegram-bot/jsninja_bot.py`)
+### 3. Telegram Bot (`telegram-bot/jsninja_bot.py`)
 
 The Telegram Bot provides an interactive, user-friendly interface accessible via the Telegram messaging app. It accepts file uploads or URLs, processes them in real-time, and delivers formatted results directly in chat.
 
@@ -172,7 +151,7 @@ The Telegram Bot provides an interactive, user-friendly interface accessible via
 - Remote assessments where desktop access is limited.
 - Educational demonstrations in training sessions or workshops.
 
-### 3. Discord Bot (`discord-bot/jsninja_discord.py`)
+### 4. Discord Bot (`discord-bot/jsninja_discord.py`)
 
 The Discord Bot extends scanning capabilities to Discord servers, leveraging rich embeds for visually appealing outputs. It supports server-wide deployment and multi-user interactions.
 
@@ -284,6 +263,10 @@ python jsninja.py --setup  # Automatically installs TruffleHog
    ```
 
 ## Usage Examples
+
+### Web Interface Usage
+
+Access the web interface at [https://iamunixtz.github.io/JSNinja](https://iamunixtz.github.io/JSNinja). Upload a JavaScript file or enter a URL to scan, and view the results directly in the browser.
 
 ### CLI Usage
 
@@ -405,17 +388,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ## Support
 
 For issues or questions:
+
 1. Review component-specific documentation and logs.
 2. Search or create issues on the [GitHub repository](https://github.com/iamunixtz/JSNinja/issues).
 3. Provide detailed reproductions, including environment details and error messages.
 
 **Disclaimer**: JS Ninja is intended solely for educational, research, and authorized security testing. Obtain explicit permission before scanning any files, URLs, or systems not owned by you. Misuse may violate laws and ethical standards.
 
-
-</div>
-
 ## Contributors
+
 <a href="https://github.com/iamunixtz/JSNinja/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=iamunixtz/JSNinja" />
 </a>
-<br /><br />

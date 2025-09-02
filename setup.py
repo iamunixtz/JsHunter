@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/jsninja",
-    packages=find_packages(),
+    packages=find_packages(include=['jsninja', 'jsninja.*']),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -29,7 +29,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "requests>=2.25.1",
-        "trufflehoggy>=3.0.0",
+        "trufflehog>=3.0.0",
         "fastapi>=0.68.0",
         "uvicorn>=0.15.0",
         "python-multipart>=0.0.5",

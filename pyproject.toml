@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "jsninja-scanner"
+version = "1.0.0"
+description = "A comprehensive JavaScript security scanner"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+
+[tool.setuptools]
+packages = ["jsninja"]
+
+[project.scripts]
+jsninja = "jsninja.cli.jsninja:main"
+jsninja-web = "jsninja.web.main:main"

@@ -1,0 +1,3 @@
+"""
+JSNinja Web Interface
+"""
