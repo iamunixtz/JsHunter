@@ -399,8 +399,4 @@ For issues or questions:
 
 <a href="https://github.com/iamunixtz/JSNinja/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=iamunixtz/JSNinja" />
-<<<<<<< HEAD
 </a>
-=======
-</a>
->>>>>>> 23d37b99abbe1824db1a4343ece1666ad203e732
