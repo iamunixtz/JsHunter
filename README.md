@@ -83,12 +83,12 @@ js-ninja/
 └── README.md             # This documentation file
 ```
 
-## Installation from PyPI
+## Installation from PyPI(comming soon)
 
 The easiest way to install JS Ninja is through pip:
 
 ```bash
-pip install jsninja-scanner
+coming soon
 ```
 
 This will install both the CLI tool and the web interface.
