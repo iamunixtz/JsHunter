@@ -1,0 +1,17 @@
+name: jshunter
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python>=3.8
+  - pip
+  - requests>=2.25.1
+  - fastapi>=0.68.0
+  - uvicorn>=0.15.0
+  - python-multipart>=0.0.5
+  - aiofiles>=0.8.0
+  - jinja2>=3.0.0
+  - pip:
+    - trufflehog>=3.0.0
+    - python-jose[cryptography]>=3.3.0
+    - passlib[bcrypt]>=1.7.4
