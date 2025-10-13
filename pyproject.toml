@@ -3,12 +3,45 @@ requires = ["setuptools>=45", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "jshunter-scanner"
-version = "1.0.0"
-description = "A comprehensive JavaScript security scanner"
+name = "jshunter"
+version = "2.0.0"
+description = "High-Performance JavaScript Security Scanner - Process 1M URLs in ~5 hours with advanced parallel processing"
 readme = "README.md"
 requires-python = ">=3.8"
-license = {file = "LICENSE"}
+license = {text = "MIT"}
+authors = [
+    {name = "iamunixtz", email = "iamunixtz@example.com"}
+]
+keywords = ["security", "javascript", "scanner", "trufflehog", "secrets", "api-keys", "penetration-testing", "bug-bounty"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Information Technology",
+    "Intended Audience :: System Administrators",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Security",
+    "Topic :: Security :: Cryptography",
+    "Topic :: Internet :: WWW/HTTP :: Indexing/Search",
+    "Topic :: Software Development :: Testing",
+    "Topic :: System :: Systems Administration",
+]
+dependencies = [
+    "requests>=2.25.1",
+    "aiohttp>=3.8.0",
+    "aiofiles>=23.0.0",
+    "fastapi>=0.68.0",
+    "uvicorn>=0.15.0",
+    "python-multipart>=0.0.5",
+    "python-jose[cryptography]>=3.3.0",
+    "passlib[bcrypt]>=1.7.4",
+]
 
 [tool.setuptools]
 packages = ["jshunter"]

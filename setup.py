@@ -12,7 +12,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/iamunixtz/JsHunter",
-    packages=find_packages(include=['jshunter', 'jshunter.*']),
+    packages=find_packages(),
     keywords="security, javascript, scanner, trufflehog, secrets, api-keys, penetration-testing, bug-bounty",
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -41,7 +41,6 @@ setup(
         "fastapi>=0.68.0",
         "uvicorn>=0.15.0",
         "python-multipart>=0.0.5",
-        "jinja2>=3.0.0",
         "python-jose[cryptography]>=3.3.0",
         "passlib[bcrypt]>=1.7.4",
     ],

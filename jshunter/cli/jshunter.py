@@ -794,6 +794,7 @@ def main():
     ap.add_argument("--concurrent-downloads", type=int, default=DEFAULT_CONCURRENT_DOWNLOADS, help=f"Maximum concurrent downloads (default: {DEFAULT_CONCURRENT_DOWNLOADS})")
     ap.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE, help=f"Batch size for TruffleHog scanning (default: {DEFAULT_BATCH_SIZE})")
     ap.add_argument("--connection-limit", type=int, default=DEFAULT_CONNECTION_LIMIT, help=f"HTTP connection limit (default: {DEFAULT_CONNECTION_LIMIT})")
+    ap.add_argument("-v", "--version", action="version", version="JSHunter 2.0.0")
     
     args = ap.parse_args()
 
