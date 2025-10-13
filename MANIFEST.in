@@ -1,0 +1,6 @@
+include README.md
+include LICENSE
+include pyproject.toml
+recursive-include jshunter *.py
+recursive-include jshunter *.txt
+recursive-include jshunter *.md
