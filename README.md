@@ -1,6 +1,11 @@
 # JSHunter - High-Performance JavaScript Security Scanner
 
-A blazing-fast JavaScript security scanner that can process **1 million URLs in ~5 hours** using advanced parallel processing and async operations.
+[![Version](https://img.shields.io/badge/version-2.0-blue.svg)](https://github.com/iamunixtz/JsHunter)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.8+-blue.svg)](https://python.org)
+[![TruffleHog](https://img.shields.io/badge/powered%20by-TruffleHog-orange.svg)](https://github.com/trufflesecurity/trufflehog)
+
+A blazing-fast JavaScript security scanner that can process **1 million URLs in ~5 hours** using advanced parallel processing and async operations. JSHunter is designed for security researchers, penetration testers, and developers who need to identify sensitive information in JavaScript files at scale.
 
 ## Performance Features
 
@@ -116,7 +121,27 @@ graph TB
 
 ## Installation
 
-### Quick Setup
+### Option 1: PyPI Installation (Recommended)
+
+```bash
+# Install JSHunter from PyPI
+pip install jshunter
+
+# Setup TruffleHog binary
+jshunter --setup
+
+# Verify installation
+jshunter --version
+```
+
+**PyPI Package Features:**
+- Automatic dependency management
+- Cross-platform compatibility
+- Easy updates with `pip install --upgrade jshunter`
+- Command-line access from anywhere
+- Integrated TruffleHog setup
+
+### Option 2: Source Installation
 
 ```bash
 # Clone the repository
@@ -130,49 +155,223 @@ pip install -r requirements.txt
 python3 jshunter --setup
 ```
 
+### Option 3: Docker Installation
+
+```bash
+# Pull the Docker image
+docker pull iamunixtz/jshunter:latest
+
+# Run JSHunter in Docker
+docker run -it --rm iamunixtz/jshunter:latest jshunter --help
+```
+
 ### Bot Configuration
 
 #### Telegram Bot Setup
 
-1. **Create a Telegram Bot:**
-   - Message [@BotFather](https://t.me/botfather) on Telegram
-   - Use `/newbot` command and follow instructions
-   - Save the bot token
+##### Telegram Bot Setup Workflow
+
+```mermaid
+graph TD
+    A[Start Telegram Bot Setup] --> B[Open Telegram App]
+    B --> C[Search for @BotFather]
+    C --> D[Start Chat with BotFather]
+    D --> E[Send /newbot Command]
+    E --> F[Enter Bot Name]
+    F --> G[Enter Bot Username]
+    G --> H[Receive Bot Token]
+    H --> I[Search for @userinfobot]
+    I --> J[Get Your Chat ID]
+    J --> K[Configure Bot Files]
+    K --> L[Edit config.py]
+    L --> M[Test Bot Commands]
+    M --> N[Setup Complete]
+    
+    %% Bot Configuration Detail
+    K --> O[Copy config.example.py to config.py<br/>Add Bot Token and Chat ID<br/>Set Allowed Users]
+    
+    %% Test Commands
+    M --> P[Test Commands:<br/>/start - Welcome message<br/>/status - Bot status<br/>/help - Show commands]
+    
+    classDef startEnd fill:#e1f5fe
+    classDef process fill:#f3e5f5
+    classDef decision fill:#fff3e0
+    classDef config fill:#e8f5e8
+    
+    class A,N startEnd
+    class B,C,D,E,F,G,H,I,J,L,M process
+    class O,P config
+```
+
+##### Step-by-Step Telegram Bot Configuration
+
+1. **Create Telegram Bot:**
+   ```bash
+   # Open Telegram and search for @BotFather
+   # Start a chat and send: /newbot
+   ```
+   - Follow the prompts to name your bot
+   - Choose a unique username ending in 'bot'
+   - Save the bot token provided
 
 2. **Get Your Chat ID:**
-   - Message [@userinfobot](https://t.me/userinfobot) to get your chat ID
-
-3. **Configure the Bot:**
    ```bash
+   # Search for @userinfobot in Telegram
+   # Start a chat and send: /start
+   ```
+   - Copy your chat ID from the response
+
+3. **Configure Bot Files:**
+   ```bash
+   # Navigate to Telegram bot directory
    cd JsHunter/telegram-bot
+   
+   # Copy configuration template
    cp config.example.py config.py
-   # Edit config.py with your bot token and chat ID
+   
+   # Edit configuration file
+   nano config.py
+   ```
+
+4. **Configuration File Setup:**
+   ```python
+   # config.py
+   TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+   TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE"
+   
+   # Restrict access to specific users (optional)
+   ALLOWED_USER_IDS = [123456789, 987654321]
+   
+   # File processing limits
+   MAX_FILE_SIZE_MB = 10
+   ALLOWED_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.mjs']
+   ```
+
+5. **Test Bot Installation:**
+   ```bash
+   # Start the Telegram bot
+   python3 jshunter_bot.py
+   
+   # Test commands in Telegram:
+   # /start - Welcome message and bot info
+   # /status - Check bot status and capabilities
+   # /help - Show all available commands
+   # /scanurl https://example.com/script.js - Test URL scanning
    ```
 
 #### Discord Bot Setup
 
-1. **Create a Discord Application:**
-   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
-   - Click "New Application" and give it a name
-   - Go to "Bot" section and click "Add Bot"
-   - Copy the bot token
+##### Discord Bot Setup Workflow
 
-2. **Set Bot Permissions:**
+```mermaid
+graph TD
+    A[Start Discord Bot Setup] --> B[Go to Discord Developer Portal]
+    B --> C[Create New Application]
+    C --> D[Name Your Application]
+    D --> E[Go to Bot Section]
+    E --> F[Click Add Bot]
+    F --> G[Copy Bot Token]
+    G --> H[Go to OAuth2 Section]
+    H --> I[Select Bot Scope]
+    I --> J[Select Permissions]
+    J --> K[Generate Invite URL]
+    K --> L[Invite Bot to Server]
+    L --> M[Configure Bot Settings]
+    M --> N[Test Bot Commands]
+    N --> O[Setup Complete]
+    
+    %% Permissions Detail
+    J --> P[Required Permissions:<br/>- Send Messages<br/>- Attach Files<br/>- Read Message History<br/>- Use Slash Commands]
+    
+    %% Configuration Detail
+    M --> Q[Edit config.py:<br/>- Add Bot Token<br/>- Set Allowed Users<br/>- Configure Webhook URL]
+    
+    classDef startEnd fill:#e1f5fe
+    classDef process fill:#f3e5f5
+    classDef decision fill:#fff3e0
+    classDef config fill:#e8f5e8
+    
+    class A,O startEnd
+    class B,C,D,E,F,G,H,I,J,K,L,N process
+    class P,Q config
+```
+
+##### Step-by-Step Discord Bot Configuration
+
+1. **Create Discord Application:**
+   ```bash
+   # Navigate to Discord Developer Portal
+   # URL: https://discord.com/developers/applications
+   ```
+   - Click "New Application"
+   - Enter application name: `JSHunter Bot`
+   - Click "Create"
+
+2. **Configure Bot Settings:**
+   - Go to "Bot" section in left sidebar
+   - Click "Add Bot"
+   - Copy the bot token (keep this secure!)
+   - Enable "Message Content Intent" under "Privileged Gateway Intents"
+
+3. **Set Bot Permissions:**
    - Go to "OAuth2" → "URL Generator"
    - Select "bot" scope
-   - Select permissions: Send Messages, Attach Files, Read Message History
-   - Use the generated URL to invite bot to your server
+   - Select these permissions:
+     - `Send Messages`
+     - `Attach Files`
+     - `Read Message History`
+     - `Use Slash Commands`
+     - `Embed Links`
+   - Copy the generated URL and open it in browser
+   - Select your server and authorize the bot
 
-3. **Configure the Bot:**
+4. **Configure Bot Files:**
    ```bash
+   # Navigate to Discord bot directory
    cd JsHunter/discord-bot
+   
+   # Copy configuration template
    cp config.example.py config.py
-   # Edit config.py with your bot token
+   
+   # Edit configuration file
+   nano config.py
    ```
 
-4. **Optional - Discord Webhook:**
-   - Create a webhook in your Discord channel
-   - Add the webhook URL to config.py for additional notifications
+5. **Configuration File Setup:**
+   ```python
+   # config.py
+   DISCORD_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"
+   DISCORD_WEBHOOK_URL = "YOUR_WEBHOOK_URL_HERE"  # Optional
+   
+   # Restrict access to specific users (optional)
+   ALLOWED_USER_IDS = [123456789012345678, 987654321098765432]
+   
+   # File processing limits
+   MAX_FILE_SIZE_MB = 10
+   ALLOWED_EXTENSIONS = ['.js', '.jsx', '.ts', '.tsx', '.mjs']
+   ```
+
+6. **Optional - Discord Webhook Setup:**
+   ```bash
+   # In your Discord channel:
+   # 1. Go to Channel Settings
+   # 2. Click "Integrations"
+   # 3. Click "Webhooks"
+   # 4. Click "Create Webhook"
+   # 5. Copy the webhook URL
+   # 6. Add to config.py
+   ```
+
+7. **Test Bot Installation:**
+   ```bash
+   # Start the Discord bot
+   python3 jshunter_discord.py
+   
+   # Test commands in Discord:
+   # !status - Check bot status
+   # !jshunter_help - Show available commands
+   # !scanurl https://example.com/script.js - Test URL scanning
+   ```
 
 ## Usage
 
@@ -427,12 +626,73 @@ ulimit -n 65536  # Increase file descriptor limit
 
 MIT License - See LICENSE file for details.
 
+## PyPI Package
+
+JSHunter is available as a PyPI package for easy installation and distribution:
+
+### Installation from PyPI
+
+```bash
+# Install the latest version
+pip install jshunter
+
+# Install a specific version
+pip install jshunter==2.0.0
+
+# Upgrade to the latest version
+pip install --upgrade jshunter
+```
+
+### Package Information
+
+- **Package Name**: `jshunter`
+- **Current Version**: `2.0.0`
+- **Python Support**: 3.8+
+- **Dependencies**: Automatically managed
+- **Command Line Tools**: `jshunter`, `jshunter-web`
+
+### Publishing to PyPI
+
+To publish updates to PyPI:
+
+```bash
+# Build the package
+python -m build
+
+# Upload to PyPI (requires PyPI account)
+python -m twine upload dist/*
+
+# Upload to TestPyPI first (recommended)
+python -m twine upload --repository testpypi dist/*
+```
+
 ## Contributing
 
 1. Fork the repository
 2. Create a feature branch
 3. Add tests for new functionality
-4. Submit a pull request
+4. Update documentation
+5. Submit a pull request
+
+### Development Setup
+
+```bash
+# Clone the repository
+git clone https://github.com/iamunixtz/JsHunter.git
+cd JsHunter
+
+# Install in development mode
+pip install -e .
+
+# Install development dependencies
+pip install -r requirements-dev.txt
+
+# Run tests
+python -m pytest
+
+# Build package locally
+python -m build
+```
 
 ## Support
 
