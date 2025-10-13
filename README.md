@@ -135,11 +135,13 @@ jshunter --version
 ```
 
 **PyPI Package Features:**
-- Automatic dependency management
+- Automatic dependency management (no conflicts)
 - Cross-platform compatibility
 - Easy updates with `pip install --upgrade jshunter`
 - Command-line access from anywhere
 - Integrated TruffleHog setup
+- Clean environment without dependency confusion
+- Professional package distribution
 
 ### Option 2: Source Installation
 
@@ -155,7 +157,20 @@ pip install -r requirements.txt
 python3 jshunter --setup
 ```
 
-### Option 3: Docker Installation
+### Option 3: Conda Installation
+
+```bash
+# Create conda environment with JSHunter
+conda env create -f environment.yml
+
+# Activate the environment
+conda activate jshunter
+
+# Verify installation
+jshunter --version
+```
+
+### Option 4: Docker Installation
 
 ```bash
 # Pull the Docker image
