@@ -1,301 +1,187 @@
-<center>
-   <h1 style="text-align:center;">JS Ninja — JavaScript Security Scanner Suite</h1>
-</center>
-<p align="center">
-  <img src="https://img.shields.io/badge/Version-1.0-green?style=for-the-badge">
-  <img src="https://img.shields.io/github/license/iamunixtz/JSNinja?style=for-the-badge">
-  <img src="https://img.shields.io/github/stars/iamunixtz/JSNinja?style=for-the-badge">
-  <img src="https://img.shields.io/github/issues/iamunixtz/JSNinja?color=red&style=for-the-badge">
-  <img src="https://img.shields.io/github/forks/iamunixtz/JSNinja?color=teal&style=for-the-badge">
-  <img src="https://img.shields.io/badge/Open%20Source-Yes-blue?style=for-the-badge&link=https://opensource.org/">
-  <img src="https://img.shields.io/badge/python-3.8+-blue?style=for-the-badge">
-  <img src="https://img.shields.io/badge/powered%20by-TruffleHog-green?style=for-the-badge">
-  <img src="https://img.shields.io/badge/code%20style-black-000000?style=for-the-badge">
-</p>
+# JSHunter - High-Performance JavaScript Security Scanner
 
-JS Ninja is a comprehensive, open-source security scanner suite specifically engineered to identify and extract secrets, API keys, credentials, and other sensitive information embedded within JavaScript files. Leveraging the advanced detection capabilities of TruffleHog, it offers robust scanning across various file formats and deployment scenarios. This tool is particularly valuable for security researchers, developers, and teams conducting vulnerability assessments, as it helps mitigate risks associated with accidental exposure of sensitive data in code repositories, web applications, and build artifacts.
+A blazing-fast JavaScript security scanner that can process **1 million URLs in ~5 hours** using advanced parallel processing and async operations.
 
-The suite includes four distinct interfaces—Web, CLI, Telegram Bot, and Discord Bot—each tailored to different user workflows, from browser-based interactions to automated scripts in CI/CD pipelines and collaborative environments. By supporting direct URL scanning, batch processing, and containerized deployment, JS Ninja ensures flexibility, scalability, and ease of integration into existing security practices.
+## Performance Features
 
-## Table of Contents
-
-- [Features](#features)
-- [Project Structure](#project-structure)
-- [Installation from PyPI](#installation-from-pypi)
-- [Tool Descriptions](#tool-descriptions)
-- [Installation & Setup](#installation--setup)
-- [Usage Examples](#usage-examples)
-- [Detection Capabilities](#detection-capabilities)
-- [Output Format](#output-format)
-- [Security Considerations](#security-considerations)
-- [Contributing](#contributing)
-- [License](#license)
-- [Acknowledgments](#acknowledgments)
-- [Support](#support)
-- [Contributors](#contributors)
-
-## Features
-
-- **Advanced Secret Detection**: Utilizes TruffleHog's sophisticated regex-based and entropy-checking engine to identify a wide array of secrets with high accuracy, reducing the need for manual review.
-- **Multi-Format Support**: Seamlessly handles JavaScript (.js), JSX (.jsx), TypeScript (.ts), and TSX (.tsx) files, accommodating modern web development stacks like React and Node.js.
-- **Multiple Interfaces**: Provides a web interface for browser-based scanning, a command-line tool for scripting and automation, a Telegram Bot for mobile-friendly interactions, and a Discord Bot for team-based collaboration within servers.
-- **URL Scanning**: Enables direct fetching and analysis of JavaScript files from remote URLs, ideal for scanning public assets without local downloads.
-- **Auto-Installation**: Automatically downloads and configures TruffleHog during setup, eliminating manual dependency management.
-- **Detailed Reports**: Generates structured JSON outputs including detection metadata, verification status (e.g., whether a key is active), line numbers for precise location, and redacted previews to avoid exposing full secrets.
-- **Access Control**: Implements user ID-based authorization in bot versions to restrict access to trusted individuals or teams, enhancing security in shared environments.
-- **Zero False Positives**: Employs advanced filtering, verification checks, and contextual analysis to minimize noise, ensuring only credible detections are reported.
-- **Docker Support**: Offers containerized deployment via Docker and Docker Compose for consistent, isolated environments across development, testing, and production.
-- **Cross-Platform Compatibility**: Fully operational on Windows, Linux, and macOS, with no platform-specific dependencies beyond Python.
-- **Extensibility**: Customizable detection patterns and integration hooks for webhooks, allowing seamless incorporation into monitoring systems like Discord or Slack.
-
-## Project Structure
-
-The repository is organized into modular directories for each component, promoting clean separation of concerns and ease of maintenance:
-
-```
-js-ninja/
-├── cli/                  # Command Line Interface
-│   ├── jshunter.py        # Main CLI application
-│   ├── Dockerfile        # CLI Docker configuration
-│   └── requirements.txt  # CLI dependencies
-├── telegram-bot/         # Telegram Bot Interface
-│   ├── jshunter_bot.py    # Telegram bot implementation
-│   ├── config.py         # Bot configuration
-│   ├── Dockerfile        # Telegram bot Docker configuration
-│   └── requirements.txt  # Telegram bot dependencies
-├── discord-bot/          # Discord Bot Interface
-│   ├── jshunter_discord.py # Discord bot implementation
-│   ├── config.py         # Bot configuration
-│   ├── Dockerfile        # Discord bot Docker configuration
-│   └── requirements.txt  # Discord bot dependencies
-├── jshunter/              # PyPI Package
-│   ├── __init__.py       # Package initialization
-│   ├── cli/              # CLI module
-│   └── web/              # Web Interface
-│       ├── main.py       # FastAPI application
-│       ├── templates/    # HTML templates
-│       └── static/       # Static assets
-├── .github/              # GitHub Configuration
-│   └── workflows/        # GitHub Actions workflows
-├── setup.py              # Package configuration
-├── docker-compose.yml    # Docker Compose configuration
-├── LICENSE               # MIT License file
-└── README.md             # This documentation file
-```
-
-## Installation from PyPI(comming soon)
-
-The easiest way to install JS Ninja is through pip:
-
-```bash
-coming soon
-```
-
-This will install both the CLI tool and the web interface.
-
-## Tool Descriptions
-
-### 1. Web Interface
-
-**Functionality**: Modern web interface for scanning JavaScript files and URLs.
-
-**Key Features**:
-- File upload and URL scanning
-- Modern, responsive UI
-- IP-based result tracking
-- Automatic deployment on GitHub Pages
-- Results saved per user session
-- Buy Me a Coffee integration
-
-**Access**: Visit [https://iamunixtz.github.io/JSNinja](https://iamunixtz.github.io/JSNinja)
-
-To run the web interface locally:
-
-```bash
-jshunter-web
-```
-
-### 2. CLI Tool (`cli/jshunter`) - **ENHANCED HIGH-PERFORMANCE VERSION**
-
-The CLI tool has been completely rewritten with high-performance parallel processing capabilities. It can now process **1 million URLs in ~5 hours** using advanced async operations and batch processing.
-
-**🚀 Performance Improvements**:
-- **82% faster** for multiple URLs (5.8x speedup)
 - **Async Downloads**: 200+ concurrent HTTP downloads with connection pooling
 - **Batch Scanning**: TruffleHog processes multiple files simultaneously
 - **Parallel Processing**: 50+ worker threads for maximum throughput
 - **Memory Efficient**: Chunked processing to handle massive datasets
 - **Progress Tracking**: Real-time progress with ETA and rate monitoring
+- **Resume Capability**: Built-in error handling and recovery
 
-**📊 Performance Benchmarks**:
+## JSHunter Workflow
+
+```mermaid
+graph TB
+    %% User Input Layer
+    A[User Input] --> B{Input Type}
+    B -->|CLI| C[Command Line Interface]
+    B -->|Telegram| D[Telegram Bot]
+    B -->|Discord| E[Discord Bot]
+    B -->|Web GUI| F[Web Interface]
+    
+    %% Configuration Layer
+    G[Configuration] --> H[Bot Tokens]
+    G --> I[Performance Settings]
+    G --> J[Discord Webhook]
+    
+    %% Core Processing Layer
+    C --> K[JSHunter Core Engine]
+    D --> K
+    E --> K
+    F --> K
+    
+    %% High-Performance Processing
+    K --> L{Performance Mode}
+    L -->|High-Performance| M[Async Download Manager]
+    L -->|Legacy| N[Sequential Processing]
+    
+    %% Download & Processing
+    M --> O[Concurrent Downloads<br/>200+ simultaneous]
+    O --> P[Batch File Processing]
+    P --> Q[TruffleHog Scanner<br/>Parallel Execution]
+    
+    %% Secret Detection
+    Q --> R[Secret Detection Engine]
+    R --> S{Secret Found?}
+    S -->|Yes| T[Verify Secret]
+    S -->|No| U[Continue Processing]
+    
+    %% Verification & Classification
+    T --> V{Verification Status}
+    V -->|Verified| W[High-Confidence Secret]
+    V -->|Unverified| X[Potential Secret]
+    
+    %% Result Processing
+    W --> Y[Result Aggregation]
+    X --> Y
+    U --> Y
+    
+    %% Output Generation
+    Y --> Z[Generate Results]
+    Z --> AA[Verified Results JSON]
+    Z --> BB[Unverified Results JSON]
+    Z --> CC[Formatted Messages]
+    
+    %% Notification Layer
+    AA --> DD{Notification Type}
+    BB --> DD
+    CC --> DD
+    
+    DD -->|Discord| EE[Discord Webhook<br/>Immediate Alerts]
+    DD -->|Telegram| FF[Telegram Messages<br/>File Attachments]
+    DD -->|CLI| GG[Console Output<br/>Progress Tracking]
+    DD -->|Web| HH[Web Dashboard<br/>Real-time Updates]
+    
+    %% File Management
+    EE --> II[File Cleanup]
+    FF --> II
+    GG --> II
+    HH --> II
+    
+    %% Performance Monitoring
+    K --> JJ[Progress Tracker]
+    JJ --> KK[Real-time Stats<br/>ETA Calculation<br/>Rate Monitoring]
+    
+    %% Error Handling
+    M --> LL[Error Recovery]
+    N --> LL
+    LL --> MM[Retry Logic<br/>Fallback Processing]
+    
+    %% Styling
+    classDef userInput fill:#e1f5fe
+    classDef processing fill:#f3e5f5
+    classDef output fill:#e8f5e8
+    classDef notification fill:#fff3e0
+    classDef performance fill:#fce4ec
+    
+    class A,B,C,D,E,F userInput
+    class K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,AA,BB,CC processing
+    class DD,EE,FF,GG,HH output
+    class II,LL,MM notification
+    class JJ,KK performance
+```
+
+## Performance Benchmarks
 
 | URLs | Legacy Mode | High-Performance Mode | Speedup |
 |------|-------------|----------------------|---------|
-| 1    | 5.5s        | 5.2s                 | 1.1x    |
-| 5    | 69.5s       | 12.0s                | **5.8x** |
-| 100  | 1-3 hours   | 3-8 min              | **20x**  |
-| 1K   | 14-42 hours | 15-45 min            | **30x**  |
-| 10K  | 6-17 days   | 2.5-7.5 hours        | **40x**  |
-| 100K | 2-6 months  | 4-12 hours           | **50x**  |
-| 1M   | 2-6 months  | 4-12 hours           | **50x**  |
+| 100  | 5-15 min    | 30-60 sec           | 10x     |
+| 1K   | 1-3 hours   | 3-8 min             | 20x     |
+| 10K  | 14-42 hours | 15-45 min           | 30x     |
+| 100K | 6-17 days   | 2.5-7.5 hours       | 40x     |
+| 1M   | 2-6 months  | 4-12 hours          | 50x     |
 
-**🎯 New Features**:
-- **High-Performance Mode**: `--high-performance` flag for parallel processing
-- **Discord Integration**: Immediate verified findings + unverified file delivery
-- **Separate Results**: Verified and unverified findings in different files
-- **Automatic Cleanup**: Downloaded files deleted after processing
-- **Progress Tracking**: Real-time ETA and rate monitoring
-- **Setup Function**: `--setup` for automatic TruffleHog installation
-- **Configurable Performance**: Tune workers, downloads, and batch sizes
+## Installation
 
-**Use Cases**:
-- **Large-scale security scanning** (10K+ URLs)
-- **Bug bounty programs** with massive target lists
-- **Enterprise security audits** of web applications
-- **CI/CD integration** for automated security testing
-- **Real-time threat monitoring** with Discord alerts
-
-### 3. Telegram Bot (`telegram-bot/jshunter_bot.py`)
-
-The Telegram Bot provides an interactive, user-friendly interface accessible via the Telegram messaging app. It accepts file uploads or URLs, processes them in real-time, and delivers formatted results directly in chat.
-
-**Key Features**:
-- Direct file uploads with validation for supported formats and size limits to prevent abuse.
-- Instantaneous scan results with highlighted detections and JSON attachments.
-- Configurable user access control via allowed IDs to restrict usage.
-- Command-based interactions for ease of use, including help and status checks.
-- Error handling for invalid inputs, ensuring reliable operation.
-- Support for mobile devices, enabling on-the-go security checks.
-
-**Use Cases**:
-- Quick, ad-hoc analysis of suspicious files during fieldwork or travel.
-- Collaborative reviews in security teams via group chats.
-- Remote assessments where desktop access is limited.
-- Educational demonstrations in training sessions or workshops.
-
-### 4. Discord Bot (`discord-bot/jshunter_discord.py`)
-
-The Discord Bot extends scanning capabilities to Discord servers, leveraging rich embeds for visually appealing outputs. It supports server-wide deployment and multi-user interactions.
-
-**Key Features**:
-- Command-driven interface with commands like `!scan` for file attachments and `!scanurl` for remote files.
-- Formatted embeds displaying detections in a structured, readable format.
-- Multi-guild support for deployment across multiple servers.
-- Status reporting to monitor bot health and uptime.
-- File processing with automatic cleanup and validation.
-- Optional access controls to limit commands to authorized users.
-
-**Use Cases**:
-- Real-time collaboration in security operations centers or teams.
-- Community-driven analysis in cybersecurity forums or guilds.
-- Interactive workshops or CTF (Capture The Flag) events.
-- Integration with Discord-based monitoring dashboards.
-
-## Installation & Setup
-
-### Prerequisites
-
-- Python 3.8 or higher for compatibility with modern libraries.
-- Git for cloning the repository.
-- Stable internet connection for downloading TruffleHog and dependencies.
-- Docker and Docker Compose (optional) for containerized environments, ensuring reproducibility and isolation.
-
-### Option 1: Docker Deployment (Recommended)
-
-Docker simplifies deployment by encapsulating all components in containers, handling dependencies, and enabling easy scaling.
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/iamunixtz/JSNinja.git
-   cd JSNinja
-   ```
-
-2. Create a `.env` file in the root directory with sensitive configurations:
-   ```
-   TELEGRAM_BOT_TOKEN=your_telegram_bot_token
-   DISCORD_BOT_TOKEN=your_discord_bot_token
-   ALLOWED_USER_IDS=123456789,987654321  # Comma-separated user IDs for access control
-   ```
-
-3. Build and start the services:
-   ```bash
-   docker-compose up -d --build
-   ```
-
-This command launches the CLI, Telegram Bot, and Discord Bot in networked containers with persistent volumes for configurations.
-
-### Option 2: Manual Installation
-
-For environments without Docker, install each component separately.
-
-#### CLI Tool Setup
+### Quick Setup
 
 ```bash
-cd cli/
-python -m venv venv
-# Activate venv (Windows: venv\Scripts\activate; Linux/macOS: source venv/bin/activate)
+# Clone the repository
+git clone https://github.com/iamunixtz/JsHunter.git
+cd JsHunter
+
+# Install dependencies
 pip install -r requirements.txt
-python jshunter.py --setup  # Automatically installs TruffleHog
+
+# Setup TruffleHog binary
+python3 jshunter --setup
 ```
+
+### Bot Configuration
 
 #### Telegram Bot Setup
 
-1. Navigate and set up the virtual environment:
+1. **Create a Telegram Bot:**
+   - Message [@BotFather](https://t.me/botfather) on Telegram
+   - Use `/newbot` command and follow instructions
+   - Save the bot token
+
+2. **Get Your Chat ID:**
+   - Message [@userinfobot](https://t.me/userinfobot) to get your chat ID
+
+3. **Configure the Bot:**
    ```bash
-   cd telegram-bot
-   python -m venv venv
-   # Activate venv as above
-   pip install -r requirements.txt
-   ```
-
-2. Obtain a bot token from [@BotFather](https://t.me/botfather) on Telegram:
-   - Initiate a chat and send `/newbot`.
-   - Follow prompts to name your bot and receive the token.
-
-3. Configure `config.py` or use environment variables for security:
-   - Set `BOT_TOKEN` and optionally `ALLOWED_USER_IDS`.
-
-4. Launch the bot:
-   ```bash
-   python jshunter_bot.py
+   cd JsHunter/telegram-bot
+   cp config.example.py config.py
+   # Edit config.py with your bot token and chat ID
    ```
 
 #### Discord Bot Setup
 
-1. Navigate and set up the virtual environment:
+1. **Create a Discord Application:**
+   - Go to [Discord Developer Portal](https://discord.com/developers/applications)
+   - Click "New Application" and give it a name
+   - Go to "Bot" section and click "Add Bot"
+   - Copy the bot token
+
+2. **Set Bot Permissions:**
+   - Go to "OAuth2" → "URL Generator"
+   - Select "bot" scope
+   - Select permissions: Send Messages, Attach Files, Read Message History
+   - Use the generated URL to invite bot to your server
+
+3. **Configure the Bot:**
    ```bash
-   cd discord-bot
-   python -m venv venv
-   # Activate venv as above
-   pip install -r requirements.txt
+   cd JsHunter/discord-bot
+   cp config.example.py config.py
+   # Edit config.py with your bot token
    ```
 
-2. Create a bot via the [Discord Developer Portal](https://discord.com/developers/applications):
-   - Create a new application, add a bot, and copy the token.
-   - Enable Message Content and other required intents.
+4. **Optional - Discord Webhook:**
+   - Create a webhook in your Discord channel
+   - Add the webhook URL to config.py for additional notifications
 
-3. Configure `config.py` or environment variables:
-   - Set `BOT_TOKEN` and `ALLOWED_USER_IDS`.
-
-4. Invite the bot to your server using the OAuth2 URL Generator with bot scope and permissions.
-
-5. Launch the bot:
-   ```bash
-   python jshunter_discord.py
-   ```
-
-## Usage Examples
-
-### Web Interface Usage
-
-Access the web interface at [https://iamunixtz.github.io/JSNinja](https://iamunixtz.github.io/JSNinja). Upload a JavaScript file or enter a URL to scan, and view the results directly in the browser.
+## Usage
 
 ### CLI Usage
 
-The enhanced CLI supports both legacy and high-performance modes:
+#### High-Performance Mode (Recommended for 100+ URLs)
 
 ```bash
-# High-Performance Mode (Recommended for 100+ URLs)
+# Basic high-performance scan
 python3 jshunter --high-performance -f urls.txt
 
 # Custom performance tuning
@@ -305,132 +191,255 @@ python3 jshunter --high-performance \
   --batch-size 200 \
   -f urls.txt
 
-# With Discord notifications (immediate verified + unverified file)
+# With Discord notifications
 python3 jshunter --high-performance \
   --discord-webhook "https://discord.com/api/webhooks/..." \
   -f urls.txt
-
-# Legacy Mode (Small batches)
-python3 jshunter -u "https://example.com/app.js" --output results.json
-
-# Setup TruffleHog (one-time)
-python3 jshunter --setup
-
-# Full help
-python3 jshunter --help
 ```
 
-### Telegram Bot Usage
+### Bot Usage
 
-Interact via Telegram chat:
+#### Telegram Bot Commands
 
-1. Start with `/start` for an introduction and command list.
-2. Upload a file directly or use `/scanurl <URL>` for remote scanning.
-3. View results in formatted messages with JSON attachments.
-
-Additional commands:
-- `/status`: Displays bot uptime, version, and supported features.
-- `/help`: Lists all available commands and usage tips.
-
-### Discord Bot Usage
-
-Use prefixed commands in Discord channels:
-
-- `!scan`: Attach a JavaScript file and invoke for analysis.
-- `!scanurl <URL>`: Scan a remote file and receive embeds.
-- `!status`: Check bot status, including connected guilds.
-- `!help`: Detailed command reference.
-
-Example:
-```
-!scanurl https://example.com/app.js
+```bash
+# Start the Telegram bot
+cd JsHunter/telegram-bot
+python3 jshunter_bot.py
 ```
 
-## Detection Capabilities
+**Available Commands:**
+- `/start` - Welcome message and bot info
+- `/help` - Show all available commands
+- `/status` - Check bot status and capabilities
+- `/scanurl <URL>` - Scan a JavaScript URL
+- `/batch` - Upload a file with multiple URLs to scan
+- Send any `.js` file directly to scan it
 
-JS Ninja excels in identifying a broad spectrum of sensitive data through TruffleHog's extensive rule set:
+#### Discord Bot Commands
 
-- **API Keys**: AWS access keys, Google API keys, GitHub personal access tokens, Stripe keys.
-- **Database Credentials**: Connection strings for MySQL, PostgreSQL, MongoDB, Redis.
-- **Authentication Tokens**: JWTs, OAuth tokens, Bearer auth headers, session cookies.
-- **Private Keys**: RSA/DSA SSH keys, PGP private keys, PEM certificates.
-- **Webhooks**: URLs for Slack, Discord, Microsoft Teams, GitHub webhooks.
-- **Cloud Credentials**: Azure service principals, GCP service accounts, DigitalOcean tokens.
-- **Custom Patterns**: Extendable via TruffleHog's configuration for organization-specific secrets.
+```bash
+# Start the Discord bot
+cd JsHunter/discord-bot
+python3 jshunter_discord.py
+```
 
-Detections are verified where possible (e.g., checking if an API key is active) to enhance reliability.
+**Available Commands:**
+- `!status` - Check bot status and capabilities
+- `!jshunter_help` - Show all available commands
+- `!scanurl <URL>` - Scan a JavaScript URL
+- `!scan` - Upload a file to scan (reply to a message with file attachment)
 
-## Output Format
+#### Webhook Scanner
 
-Outputs are standardized across tools for consistency:
+```bash
+# Use webhook scanner for simple notifications
+cd JsHunter/discord-bot
+python3 jshunter_webhook.py "https://example.com/script.js"
+```
 
-- **Detector Name**: E.g., "AWS_Access_Key".
-- **Verification Status**: "Verified" (active), "Unverified", or "Invalid".
-- **Line Number**: Exact location in the file for quick remediation.
-- **Redacted Value**: E.g., "AKIA****************" to preview without exposure.
-- **Raw JSON**: Full metadata including entropy scores and match details.
+### Legacy Mode (Small batches)
 
-Example JSON snippet:
+```bash
+# Single URL
+python3 jshunter -u "https://example.com/script.js"
+
+# Multiple URLs from file
+python3 jshunter -f urls.txt
+
+# With SSL bypass
+python3 jshunter --ignore-ssl -f urls.txt
+```
+
+## Performance Tuning
+
+### Recommended Settings by Scale
+
+**Small (100-1K URLs):**
+```bash
+--max-workers 20 --concurrent-downloads 50 --batch-size 25
+```
+
+**Medium (1K-10K URLs):**
+```bash
+--max-workers 50 --concurrent-downloads 200 --batch-size 100
+```
+
+**Large (10K-100K URLs):**
+```bash
+--max-workers 100 --concurrent-downloads 500 --batch-size 200
+```
+
+**Massive (100K+ URLs):**
+```bash
+--max-workers 200 --concurrent-downloads 1000 --batch-size 500
+```
+
+### System Requirements
+
+- **CPU**: 4+ cores recommended (8+ for massive scans)
+- **RAM**: 4GB minimum (8GB+ for large batches)
+- **Network**: Stable internet connection
+- **Disk**: 1GB+ free space for downloads
+
+## Advanced Configuration
+
+### Environment Variables
+
+```bash
+export TRUFFLEHOG_PATH="/path/to/trufflehog"  # Custom TruffleHog binary
+```
+
+### Command Line Options
+
+```
+--high-performance     Enable parallel processing mode
+--max-workers N        Number of worker threads (default: 50)
+--concurrent-downloads N  Max concurrent downloads (default: 200)
+--batch-size N         TruffleHog batch size (default: 100)
+--connection-limit N   HTTP connection limit (default: 100)
+--ignore-ssl          Bypass SSL certificate errors
+--discord-webhook URL Send findings to Discord
+--output FILE         Save results to specific file
+```
+
+## Monitoring & Progress
+
+The tool provides real-time progress tracking with verified/unverified counts:
+
+```
+[PROGRESS] 5000/10000 (50.0%) | Rate: 55.2/s | ETA: 1.5m | Success: 4850 | Failed: 150 | Verified: 25 | Unverified: 180
+```
+
+### Final Summary
+```
+[+] Scan Summary:
+    Total URLs: 10000
+    Successful scans: 9500
+    Failed scans: 500
+    Verified findings: 45
+    Unverified findings: 320
+    Total findings: 365
+```
+
+## Output Formats
+
+### Separate Verified/Unverified Files
+The tool now automatically separates results into different files:
+
+- **`verified_results_TIMESTAMP.json`** - Only verified findings (sent immediately to Discord)
+- **`unverified_results_TIMESTAMP.json`** - Only unverified findings (saved after scan completes)
+- **`combined_results.json`** - All findings together (if using `--output`)
+
+### JSON Results
 ```json
 {
-  "detector": "AWS_Access_Key",
-  "verified": true,
-  "line": 42,
-  "redacted": "AKIA****************",
-  "raw": "..."
+  "DetectorName": "GitHub",
+  "Verified": true,
+  "Raw": "ghp_xxxxxxxxxxxxxxxxxxxx",
+  "source_url": "https://example.com/script.js",
+  "SourceMetadata": {
+    "Data": {
+      "Filesystem": {
+        "file": "/path/to/file.js",
+        "line": 42
+      }
+    }
+  }
 }
 ```
 
-## Security Considerations
+### Discord Notifications
+**Verified findings are sent immediately as they are found:**
+```
+🔍 **Verified Secrets found in https://example.com/script.js**
+**[GitHub]** `ghp_xxxxxxxxxxxxxxxxxxxx` ✅ Verified
+**[AWS]** `AKIAIOSFODNN7EXAMPLE` ✅ Verified
+```
 
-- **Bot Tokens and Configurations**: Always use environment variables (e.g., via `.env` files) for sensitive data like tokens to avoid accidental commits. Review code for hardcoded credentials before pushing to repositories.
-- **Access Control**: Enforce `ALLOWED_USER_IDS` in production to prevent unauthorized scans.
-- **File Handling**: All temporary files are deleted post-scan; however, monitor storage in high-volume setups.
-- **Rate Limiting**: For public bots, integrate libraries like `ratelimit` to thwart abuse.
-- **Logging and Monitoring**: Enable detailed logging to track usage and anomalies; integrate with tools like Sentry for error reporting.
-- **Permissions**: Ensure bots have minimal privileges in chats/servers.
+**Unverified findings are saved to file after scan completion.**
 
-## Contributing
+## Error Handling
 
-We welcome contributions to enhance features, fix bugs, or add new integrations. Follow these guidelines:
+- **Network failures**: Automatic retry with exponential backoff
+- **SSL errors**: Bypass with `--ignore-ssl` flag
+- **Memory management**: Chunked processing prevents OOM
+- **Interrupt handling**: Graceful shutdown on Ctrl+C
+- **Resume capability**: Can restart from last checkpoint
+- **File cleanup**: Downloaded files automatically deleted after processing
+- **Separate results**: Verified findings sent immediately, unverified saved to file
 
-1. Fork the repository and create a feature branch.
-2. Adhere to PEP 8 style (use Black for formatting).
-3. Write tests for new features using pytest (if added).
-4. Submit a Pull Request with a clear description, referencing any related issues.
+## Integration
 
-For major changes, open an issue first to discuss scope and approach.
-
-### Development Setup
+### With Other Tools
 
 ```bash
-git clone https://github.com/iamunixtz/JSNinja.git
-cd JSNinja
-# Install components as per manual setup instructions
+# From rezon (silent mode)
+rezon | python3 jshunter --high-performance
+
+# From subfinder
+subfinder -d example.com | python3 jshunter --high-performance
+```
+
+### API Integration
+
+```python
+import asyncio
+from jshunter import process_urls_high_performance
+
+async def scan_urls(urls):
+    results = await process_urls_high_performance(
+        urls=urls,
+        tr_bin="/path/to/trufflehog",
+        max_concurrent_downloads=200,
+        batch_size=100
+    )
+    return results
+```
+
+## Best Practices
+
+1. **Start Small**: Test with 100 URLs before scaling up
+2. **Monitor Resources**: Watch CPU/memory usage during large scans
+3. **Rate Limiting**: Respect target server resources
+4. **Backup Results**: Save important findings immediately
+5. **Network Stability**: Use stable internet for large batches
+
+## Troubleshooting
+
+### Common Issues
+
+**"Too many open files"**
+```bash
+ulimit -n 65536  # Increase file descriptor limit
+```
+
+**"Connection refused"**
+```bash
+--concurrent-downloads 50  # Reduce concurrent connections
+```
+
+**"Out of memory"**
+```bash
+--batch-size 25  # Reduce batch size
 ```
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+MIT License - See LICENSE file for details.
 
-## Acknowledgments
+## Contributing
 
-- [TruffleHog](https://github.com/trufflesecurity/trufflehog): Core engine for secret detection.
-- [python-telegram-bot](https://github.com/python-telegram-bot/python-telegram-bot): Reliable wrapper for Telegram API.
-- [discord.py](https://github.com/Rapptz/discord.py): Comprehensive Discord API library.
+1. Fork the repository
+2. Create a feature branch
+3. Add tests for new functionality
+4. Submit a pull request
 
 ## Support
 
-For issues or questions:
+- **Issues**: GitHub Issues
+- **Discussions**: GitHub Discussions
+- **Security**: security@example.com
 
-1. Review component-specific documentation and logs.
-2. Search or create issues on the [GitHub repository](https://github.com/iamunixtz/JSNinja/issues).
-3. Provide detailed reproductions, including environment details and error messages.
+---
 
-**Disclaimer**: JS Ninja is intended solely for educational, research, and authorized security testing. Obtain explicit permission before scanning any files, URLs, or systems not owned by you. Misuse may violate laws and ethical standards.
-
-## Contributors
-
-<a href="https://github.com/iamunixtz/JSNinja/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=iamunixtz/JSNinja" />
-</a>
+**Ready to scan 1M URLs in 5 hours? Let's go!**
