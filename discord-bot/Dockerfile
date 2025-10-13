@@ -16,18 +16,18 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the CLI dependency
-COPY ../cli/jsninja.py ./cli/
+COPY ../cli/jshunter.py ./cli/
 COPY ../cli/config.py ./cli/
 
 # Copy the Discord bot files
-COPY jsninja_discord.py .
+COPY jshunter_discord.py .
 COPY config.py .
 
 # Create necessary directories
 RUN mkdir -p temp results .bin
 
 # Set up TruffleHog (will be downloaded on first run)
-RUN cd cli && python jsninja.py --setup
+RUN cd cli && python jshunter.py --setup
 
 # Set environment variables
 ENV PYTHONPATH=/app
@@ -41,7 +41,7 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import sys; sys.exit(0 if __import__('config').DISCORD_BOT_TOKEN != 'YOUR_BOT_TOKEN_HERE' else 1)"
 
 # Run the bot
-CMD ["python", "jsninja_discord.py"]
+CMD ["python", "jshunter_discord.py"]
 
 # Labels
 LABEL maintainer="JS Ninja Team"

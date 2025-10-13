@@ -46,7 +46,7 @@ ALLOWED_EXTENSIONS = [".js", ".jsx", ".ts", ".tsx"]
 ### Running the Bot
 
 ```bash
-python jsninja_bot.py
+python jshunter_bot.py
 ```
 
 ## Usage
@@ -142,7 +142,7 @@ def is_user_authorized(user_id: int) -> bool:
 ### Local Development
 
 ```bash
-python jsninja_bot.py
+python jshunter_bot.py
 ```
 
 ### Production Deployment
@@ -150,8 +150,8 @@ python jsninja_bot.py
 1. **VPS/Server**:
    ```bash
    # Use screen or tmux for persistent sessions
-   screen -S jsninja-bot
-   python jsninja_bot.py
+   screen -S jshunter-bot
+   python jshunter_bot.py
    # Ctrl+A, D to detach
    ```
 
@@ -162,7 +162,7 @@ python jsninja_bot.py
    COPY requirements.txt .
    RUN pip install -r requirements.txt
    COPY . .
-   CMD ["python", "jsninja_bot.py"]
+   CMD ["python", "jshunter_bot.py"]
    ```
 
 3. **Systemd Service** (Linux):
@@ -175,7 +175,7 @@ python jsninja_bot.py
    Type=simple
    User=your-user
    WorkingDirectory=/path/to/telegram-bot
-   ExecStart=/usr/bin/python3 jsninja_bot.py
+   ExecStart=/usr/bin/python3 jshunter_bot.py
    Restart=always
    
    [Install]
@@ -187,7 +187,7 @@ python jsninja_bot.py
 ### Bot Not Responding
 
 1. Check bot token in `config.py`
-2. Verify bot is running: `python jsninja_bot.py`
+2. Verify bot is running: `python jshunter_bot.py`
 3. Check network connectivity
 4. Review console logs for errors
 
@@ -196,7 +196,7 @@ python jsninja_bot.py
 ```bash
 # The bot will auto-install TruffleHog, but you can manually install:
 cd ../cli/
-python jsninja.py --setup
+python jshunter.py --setup
 ```
 
 ### Permission Errors
@@ -243,10 +243,10 @@ git add .
 git commit -m "Initial commit of JS Ninja Telegram Bot"
 
 # Add remote repository
-git remote add origin https://github.com/yourusername/jsninja-telegram-bot.git
+git remote add origin https://github.com/yourusername/jshunter-telegram-bot.git
 
 # Push to GitHub
 git push -u origin main
 ```
 
-Visit the repository at https://github.com/yourusername/jsninja-telegram-bot to manage issues, pull requests, and documentation.
+Visit the repository at https://github.com/yourusername/jshunter-telegram-bot to manage issues, pull requests, and documentation.

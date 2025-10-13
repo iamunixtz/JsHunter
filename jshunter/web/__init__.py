@@ -1,3 +1,1 @@
-"""
-JSNinja Web Interface
-"""
+# JSHunter Web Module

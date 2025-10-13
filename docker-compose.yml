@@ -44,4 +44,4 @@ services:
 
 networks:
   default:
-    name: jsninja-network
+    name: jshunter-network

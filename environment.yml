@@ -1,4 +1,4 @@
-name: jsninja
+name: jshunter
 channels:
   - conda-forge
   - defaults

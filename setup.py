@@ -4,15 +4,15 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
-    name="jsninja-scanner",
+    name="jshunter-scanner",
     version="1.0.0",
     author="Your Name",
     author_email="your.email@example.com",
     description="A comprehensive JavaScript security scanner for detecting secrets and sensitive information",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/jsninja",
-    packages=find_packages(include=['jsninja', 'jsninja.*']),
+    url="https://github.com/yourusername/jshunter",
+    packages=find_packages(include=['jshunter', 'jshunter.*']),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
@@ -40,13 +40,13 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "jsninja=jsninja.cli.jsninja:main",
-            "jsninja-web=jsninja.web.main:main",
+            "jshunter=jshunter.cli.jshunter:main",
+            "jshunter-web=jshunter.web.main:main",
         ],
     },
     include_package_data=True,
     package_data={
-        "jsninja": [
+        "jshunter": [
             "web/templates/*.html",
             "web/static/css/*.css",
             "web/static/js/*.js",
